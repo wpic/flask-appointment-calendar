@@ -3,6 +3,26 @@
 {% set page_title = 'Home' %}
 
 {% block container %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/calendar.css') }}">
+<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
+<script src="{{ url_for('static', filename='js/vendor/calendar.js') }}"></script>
 <div class="container">
+    <div id="calendar">
+        <script type="text/javascript">
+         var calendar = $('#calendar').calendar({
+             events_source: [
+                 {
+                     "id": 293,
+                     "title": "Event 1",
+                     "url": "http://example.com",
+                     "class": 'event-important',
+                     "start": 12039485678000, // Milliseconds
+                     "end": 1234576967000 // Milliseconds
+                 },
+             ],
+             tmpl_path: "static/tmpls/"});
+        </script>
+    </div>
 </div>
 {% endblock %}
