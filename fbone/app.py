@@ -8,6 +8,7 @@ from flask.ext.babel import Babel
 from .config import DefaultConfig
 from .user import User, user
 from .settings import settings
+from .appointment import appointment
 from .frontend import frontend
 from .api import api
 from .admin import admin
@@ -19,6 +20,7 @@ from .utils import INSTANCE_FOLDER_PATH
 __all__ = ['create_app']
 
 DEFAULT_BLUEPRINTS = (
+    appointment,
     frontend,
     user,
     settings,

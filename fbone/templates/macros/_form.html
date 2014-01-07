@@ -35,7 +35,7 @@
 
 {% macro render_datepicker(field) %}
 <div class="control-group{% if field.errors %} error{% endif %}">
-    <label class="control-label" 
+    <label class="control-label"
         for="{{ field.id }}">
         {{ field.label }}
     </label>
@@ -51,9 +51,32 @@
 </div>
 {% endmacro %}
 
+{% macro render_datetimepicker(field) %}
+<div class="control-group{% if field.errors %} error{% endif %}">
+    <label class="control-label"
+           for="{{ field.id }}">
+        {{ field.label }}
+    </label>
+    <div class="controls">
+        <div class="datetimepicker input-append date">
+            {{ field() }}
+            <span class="add-on">
+                <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+            </span>
+        </div>
+        <span class="help-inline">{{ field.description }}</span>
+        {% if field.errors -%}
+        {% for error in field.errors -%}
+        <span class="help-block error">{{ error }}</span>
+        {%- endfor %}
+        {%- endif %}
+    </div>
+</div>
+{% endmacro %}
+
 {% macro render_textarea(field) %}
 <div class="control-group{% if field.errors %} error{% endif %}">
-    <label class="control-label" 
+    <label class="control-label"
         for="{{ field.id }}">
         {{ field.label }}
     </label>
@@ -71,7 +94,7 @@
 
 {% macro render_input(field) %}
 <div class="control-group{% if field.errors %} error{% endif %}">
-    <label class="control-label" 
+    <label class="control-label"
         for="{{ field.id }}">
         {{ field.label }}
     </label>
@@ -95,10 +118,9 @@
 </div>
 {% endmacro %}
 
-{% macro render_form(url, form, horizontal=False, legend=None, confirm_msg=None, formid=None) %}
-{% set idattr = "id=" + formid if formid else "" %}
-<form {{idattr}} class="{% if horizontal %}form-horizontal{% endif %}" method="POST" action="{{ url }}"
-    {% if confirm_msg %}onsubmit='return confirm("{{ confirm_msg }}");' {% endif %} 
+{% macro render_form(url, form, horizontal=False, legend=None, confirm_msg=None) %}
+<form class="{% if horizontal %}form-horizontal{% endif %}" method="POST" action="{{ url }}"
+    {% if confirm_msg %}onsubmit='return confirm("{{ confirm_msg }}");' {% endif %}
     {% if form.multipart %}enctype="multipart/form-data"{% endif %} >
     {{ form.hidden_tag() }}
     <fieldset>
@@ -118,6 +140,8 @@
                     {{ render_textarea(field) }}
                 {% elif field.type == "DateField" %}
                     {{ render_datepicker(field) }}
+                {% elif field.type == "DateTimeField" %}
+                    {{ render_datetimepicker(field) }}
                 {% elif field.type == "TextField" %}
                     {% if focus %}
                         {{ render_input(field) }}

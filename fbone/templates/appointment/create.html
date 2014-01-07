@@ -1,0 +1,30 @@
+{% from "macros/_form.html" import render_form %}
+
+{% set page_title = 'Make an appointment' %}
+
+{% extends "layouts/base.html" %}
+
+{% block css_style %}
+<link rel="stylesheet" type="text/css" media="screen"
+      href="{{ url_for('static', filename='css/bootstrap-datetimepicker.min.css') }}">
+
+<style type="text/css">
+ .icon-calendar {
+     margin-top: 6px;
+ }
+</style>
+{% endblock %}
+
+{% block body %}
+{{ render_form(url_for('appointment.create'), form) }}
+{% endblock %}
+
+{% block js_user %}
+<script src="{{ url_for('static', filename='js/vendor/bootstrap-datetimepicker.min.js') }}"></script>
+<script type="text/javascript">
+ $('.datetimepicker').datetimepicker({
+     format: 'dd/MM/yyyy hh:mm:ss',
+ });
+</script>
+
+{% endblock %}
