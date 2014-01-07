@@ -40,7 +40,7 @@
         <div class="navbar">
             <div class="navbar-inner">
                 <div class="container">
-                    <a class='brand' href='{{ url_for('frontend.index') }}'><img src="{{ url_for('static', filename='img/logo.png') }}" /></a>
+                    <a class='brand' href='{{ url_for('frontend.index')}}'>WPIC Web Calendar</a>
 
                     {% if current_user.is_authenticated() %}
                     <form class="navbar-search pull-left" action="{{ url_for('frontend.search') }}">
