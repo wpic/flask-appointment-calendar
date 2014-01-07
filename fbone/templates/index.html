@@ -1,6 +1,6 @@
 {% extends 'layouts/base.html' %}
 
-{% set page_title = 'Home' %}
+{% set page_title = 'Web Calendar' %}
 
 {% block container %}
 
@@ -28,8 +28,8 @@
     <div id="calendar">
     </div>
 </div>
+{% endblock %}
 
-<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
-<script src="{{ url_for('static', filename='js/vendor/calendar.js') }}"></script>
-<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+{% block js_user %}
+<script src="{{ url_for('static', filename='js/calendar_app_init.js') }}"></script>
 {% endblock %}
