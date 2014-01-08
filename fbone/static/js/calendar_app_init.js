@@ -11,7 +11,7 @@
                 "class": 'event-important',
                 "start": 12039485678000, // Milliseconds
                 "end": 1234576967000 // Milliseconds
-            },
+            }
         ],
 		view: 'month',
 		tmpl_path: 'static/tmpls/',

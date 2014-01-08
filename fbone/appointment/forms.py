@@ -21,10 +21,8 @@ class MakeAppointmentForm(Form):
                           [Required(),
                            Length(USERNAME_LEN_MIN, USERNAME_LEN_MAX)])
     email = EmailField(u'Email', [Required(), Email()])
-    start_datetime = DateTimeField(u'Start Time',
-                                   [Required()])
-    end_datetime = DateTimeField(u'End Time',
-                                 [Required()])
+    start_datetime = DateTimeField(u'Start Time')
+    end_datetime = DateTimeField(u'End Time')
     content = TextAreaField(u'Content',
                             [Required(),
                              Length(CONTENT_LEN_MIN, CONTENT_LEN_MAX)])
