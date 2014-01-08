@@ -7,6 +7,9 @@ from flask.ext.wtf.html5 import EmailField
 from ..user import User
 from ..utils import (USERNAME_LEN_MIN, USERNAME_LEN_MAX)
 
+EMAIL_LEN_MIN = 4
+EMAIL_LEN_MAX = 64
+
 CONTENT_LEN_MIN = 16
 CONTENT_LEN_MAX = 1024
 
@@ -20,7 +23,10 @@ class MakeAppointmentForm(Form):
     last_name = TextField(u'Your last name.',
                           [Required(),
                            Length(USERNAME_LEN_MIN, USERNAME_LEN_MAX)])
-    email = EmailField(u'Email', [Required(), Email()])
+    email = EmailField(u'Email',
+                       [Required(),
+                        Email(),
+                        Length(EMAIL_LEN_MIN, EMAIL_LEN_MAX)])
     start_datetime = DateTimeField(u'Start Time')
     end_datetime = DateTimeField(u'End Time')
     content = TextAreaField(u'Content',

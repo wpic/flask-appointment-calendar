@@ -1,16 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from uuid import uuid4
-
-from flask import (Blueprint, render_template, current_app, request,
-                   flash, url_for, redirect, session, abort)
+from flask import (Blueprint, render_template, request,
+                   flash, url_for, redirect)
 from flask.ext.mail import Message
-from flask.ext.babel import gettext as _
-from flask.ext.login import login_required, login_user, current_user, logout_user, confirm_login, login_fresh
 
-from ..user import User, UserDetail
-from ..extensions import db, mail, login_manager, oid
+from ..extensions import db, mail
 from .forms import MakeAppointmentForm
+from .models import Appointment
 
 
 appointment = Blueprint('appointment', __name__, url_prefix='/appointment')
@@ -18,5 +14,20 @@ appointment = Blueprint('appointment', __name__, url_prefix='/appointment')
 
 @appointment.route('/create', methods=['GET', 'POST'])
 def create():
-    form = MakeAppointmentForm()
+    form = MakeAppointmentForm(next=request.args.get('next'))
+    if form.validate_on_submit():
+        appointment = Appointment()
+        form.populate_obj(appointment)
+
+        db.session.add(appointment)
+        db.session.commit()
+
+        flash_message = """
+        Congratulations! You've just made an appointment
+        on WPIC Web Calendar system, please check your email for details.
+        """
+        flash(flash_message)
+
+        return redirect(url_for('appointment.create'))
+
     return render_template('appointment/create.html', form=form)
