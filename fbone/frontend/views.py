@@ -8,9 +8,9 @@ from flask.ext.mail import Message
 from flask.ext.babel import gettext as _
 from flask.ext.login import login_required, login_user, current_user, logout_user, confirm_login, login_fresh
 
-from ..user import User, UserDetail
+from ..user import User
 from ..extensions import db, mail, login_manager, oid
-from .forms import SignupForm, LoginForm, RecoverPasswordForm, ReauthForm, ChangePasswordForm, OpenIDForm, CreateProfileForm
+from .forms import SignupForm, LoginForm, RecoverPasswordForm, ReauthForm, ChangePasswordForm, OpenIDForm
 
 
 frontend = Blueprint('frontend', __name__)
@@ -39,27 +39,6 @@ def create_or_login(resp):
     return redirect(url_for('frontend.create_profile', next=oid.get_next_url(),
             name=resp.fullname or resp.nickname, email=resp.email,
             openid=resp.identity_url))
-
-
-@frontend.route('/create_profile', methods=['GET', 'POST'])
-def create_profile():
-    if current_user.is_authenticated():
-        return redirect(url_for('user.index'))
-
-    form = CreateProfileForm(name=request.args.get('name'),
-            email=request.args.get('email'),
-            openid=request.args.get('openid'))
-
-    if form.validate_on_submit():
-        user = User()
-        form.populate_obj(user)
-        db.session.add(user)
-        db.session.commit()
-
-        if login_user(user):
-            return redirect(url_for('user.index'))
-
-    return render_template('frontend/create_profile.html', form=form)
 
 
 @frontend.route('/')
@@ -144,7 +123,6 @@ def signup():
 
     if form.validate_on_submit():
         user = User()
-        user.user_detail = UserDetail()
         form.populate_obj(user)
 
         db.session.add(user)
