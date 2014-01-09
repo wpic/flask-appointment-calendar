@@ -4,14 +4,15 @@ import os
 
 from flask import Flask, request, render_template
 from flask.ext.babel import Babel
+from flask.ext.admin import Admin
+from flask.ext.admin.contrib.sqla import ModelView
 
 from .config import DefaultConfig
 from .user import User, user
+from .appointment import Appointment, appointment
 from .settings import settings
-from .appointment import appointment
 from .frontend import frontend
 from .api import api
-from .admin import admin
 from .extensions import db, mail, cache, login_manager, oid
 from .utils import INSTANCE_FOLDER_PATH
 
@@ -25,7 +26,6 @@ DEFAULT_BLUEPRINTS = (
     user,
     settings,
     api,
-    admin,
 )
 
 
@@ -45,6 +45,9 @@ def create_app(config=None, app_name=None, blueprints=None):
     configure_logging(app)
     configure_template_filters(app)
     configure_error_handlers(app)
+    admin = Admin(app)
+    admin.add_view(ModelView(User, db.session))
+    admin.add_view(ModelView(Appointment, db.session))
 
     return app
 

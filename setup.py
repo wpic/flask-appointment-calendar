@@ -16,6 +16,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'Flask',
+        'Flask-Admin',
         'Flask-SQLAlchemy',
         'Flask-WTF',
         'Flask-Script',
