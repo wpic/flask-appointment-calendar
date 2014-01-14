@@ -17,6 +17,7 @@ setup(
     install_requires=[
         'Flask',
         'Flask-Admin',
+        'Flask-DebugToolbar',
         'Flask-SQLAlchemy',
         'Flask-WTF',
         'Flask-Script',

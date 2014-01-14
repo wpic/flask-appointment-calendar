@@ -3,9 +3,10 @@
 import os
 
 from flask import Flask, request, render_template
-from flask.ext.babel import Babel
 from flask.ext.admin import Admin
 from flask.ext.admin.contrib.sqla import ModelView
+from flask.ext.babel import Babel
+from flask.ext.debugtoolbar import DebugToolbarExtension
 
 from .config import DefaultConfig
 from .user import User, user
@@ -45,9 +46,8 @@ def create_app(config=None, app_name=None, blueprints=None):
     configure_logging(app)
     configure_template_filters(app)
     configure_error_handlers(app)
-    admin = Admin(app)
-    admin.add_view(ModelView(User, db.session))
-    admin.add_view(ModelView(Appointment, db.session))
+    configure_admin(app)
+    configure_debugtoolbar(app)
 
     return app
 
@@ -178,3 +178,13 @@ def configure_error_handlers(app):
     @app.errorhandler(500)
     def server_error_page(error):
         return render_template("errors/server_error.html"), 500
+
+
+def configure_admin(app):
+    admin = Admin(app)
+    admin.add_view(ModelView(User, db.session))
+    admin.add_view(ModelView(Appointment, db.session))
+
+
+def configure_debugtoolbar(app):
+    DebugToolbarExtension(app)
