@@ -1,0 +1,39 @@
+* Setup
+
+This project starts from [[https://github.com/imwilsonxu/fbone][fbone]] for faster prototyping with Python Flask.
+
+You need the following installed:
+- Python 2.7
+- virtualenv
+- pip
+- [[http://docs.fabfile.org/en/1.8/][fabric]]
+
+Instructions to setup the test development:
+
+Clone:
+#+BEGIN_SRC sh
+git clone git@github.com:wpic/flask-appointment-calendar.git
+#+END_SRC
+
+Setup virtualenv:
+#+BEGIN_SRC sh
+fab setup
+#+END_SRC
+
+Debug and test(this will erase the old database data):
+#+BEGIN_SRC sh
+source env/bin/activate
+fab d
+#+END_SRC
+
+Restart:
+#+BEGIN_SRC sh
+source env/bin/activate
+python manage.py run
+#+END_SRC
+
+* Admin
+The hidden entrance:
+- Login: http://localhost:5000/login (username: admin, password: 123456)
+- Register: http://localhost:5000/signup
+- Make an appointment: http://localhost:5000/appointment/create
