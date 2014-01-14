@@ -33,6 +33,44 @@
 </div>
 {% endmacro %}
 
+{% macro render_select(field) %}
+<div class="control-group{% if field.errors %} error{% endif %}">
+    {{ field.label(class_="control-label") }}
+    <div class="controls">
+        {{ field(class="span6") }}
+        <span class="help-inline">{{ field.description }}</span>
+        {% if field.errors -%}
+            {% for error in field.errors -%}
+            <span class="help-block error">{{ error }}</span>
+            {%- endfor %}
+        {%- endif %}
+    </div>
+</div>
+{% endmacro %}
+
+{% macro render_select_optgroup(field) %}
+<div class="control-group{% if field.errors %} error{% endif %}">
+    {{ field.label(class_="control-label") }}
+    <div class="controls">
+        <select id="{{ field.id}} " name="{{field.name}}" class="span6">
+            {% for optgroup in field.choices.keys()|sort %}
+            <optgroup name="{{ optgroup }}">
+                {% for value, label in field.choices[optgroup] %}
+                <option value="{{ value }}"> {{ label }} </option>
+                {% endfor %}
+            </optgroup>
+            {% endfor %}
+        </select>
+        <span class="help-inline">{{ field.description }}</span>
+        {% if field.errors -%}
+            {% for error in field.errors -%}
+            <span class="help-block error">{{ error }}</span>
+            {%- endfor %}
+        {%- endif %}
+    </div>
+</div>
+{% endmacro %}
+
 {% macro render_datepicker(field) %}
 <div class="control-group{% if field.errors %} error{% endif %}">
     <label class="control-label"
@@ -132,6 +170,10 @@
             {% if field.type != "HiddenField" and field.type != "CSRFTokenField" %}
                 {% if field.type == "RadioField" %}
                     {{ render_radio(field) }}
+                {% elif field.type == "SelectField" %}
+                    {{ render_select(field) }}
+                {% elif field.type == "SelectOptgroupField" %}
+                    {{ render_select_optgroup(field) }}
                 {% elif field.type == "BooleanField" %}
                     {{ render_checkbox(field) }}
                 {% elif field.type == "SubmitField" %}
