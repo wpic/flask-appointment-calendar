@@ -16,6 +16,7 @@
 		view: 'month',
 		tmpl_path: 'static/tmpls/',
 		tmpl_cache: false,
+		holidays: {},
 		onAfterEventsLoad: function(events) {
 			if(!events) {
 				return;
