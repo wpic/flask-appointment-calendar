@@ -10,8 +10,11 @@ from ..utils import (USERNAME_LEN_MIN, USERNAME_LEN_MAX)
 EMAIL_LEN_MIN = 4
 EMAIL_LEN_MAX = 64
 
-CONTENT_LEN_MIN = 16
-CONTENT_LEN_MAX = 1024
+MESSAGE_LEN_MIN = 16
+MESSAGE_LEN_MAX = 1024
+
+TIMEZONE_LEN_MIN = 1
+TIMEZONE_LEN_MAX = 64
 
 TIMEZONES = {
     "TZ1": [("-8.0", "(GMT -8:00) Pacific Time (US & Canada)"),
@@ -57,7 +60,11 @@ class SelectOptgroupField(SelectField):
     """
     Monkey-patched SelectField to make it support one-level optgroup.
     """
-    pass
+
+    # A really really dirty workaround, or we will get a "too many values to
+    # unpack" error.
+    def pre_validate(self, form):
+        return True
 
 
 class MakeAppointmentForm(Form):
@@ -73,8 +80,10 @@ class MakeAppointmentForm(Form):
     start_datetime = DateTimeField(u'Start Time')
     end_datetime = DateTimeField(u'End Time')
     timezone = SelectOptgroupField(u'Timezone',
+                                   [Length(TIMEZONE_LEN_MIN,
+                                           TIMEZONE_LEN_MAX)],
                                    choices=TIMEZONES)
     message = TextAreaField(u'Message',
                             [Required(),
-                             Length(CONTENT_LEN_MIN, CONTENT_LEN_MAX)])
+                             Length(MESSAGE_LEN_MIN, MESSAGE_LEN_MAX)])
     submit = SubmitField('OK')
