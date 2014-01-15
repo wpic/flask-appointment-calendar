@@ -33,6 +33,9 @@
 			$('.page-header h3').text(this.getTitle());
 			$('.btn-group button').removeClass('active');
 			$('button[data-calendar-view="' + view + '"]').addClass('active');
+
+			// disable "week" popup in month view.
+			$('.cal-month-box .cal-row-fluid').off('mouseenter').off('mouseleave');
 		},
 		classes: {
 			months: {
