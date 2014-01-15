@@ -78,7 +78,12 @@
         {{ field.label }}
     </label>
     <div class="controls">
-        {{ field() }}
+    	<div class="datetimepicker-no-time input-append">
+        	{{ field() }}
+            <span class="add-on">
+                <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+            </span>
+        </div>
         <span class="help-inline">{{ field.description }}</span>
         {% if field.errors -%}
             {% for error in field.errors -%}

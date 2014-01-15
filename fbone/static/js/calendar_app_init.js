@@ -37,6 +37,12 @@
 
 			// disable "week" popup in month view.
 			$('.cal-month-box .cal-row-fluid').off('mouseenter').off('mouseleave');
+
+			// redirect to appointment page when click on a date
+			$('.cal-month-box *[data-cal-date]').off('click');
+			$('.cal-month-box *[data-cal-date]').click(function() {
+				window.location.href = "/appointment/create?date=" + $(this).data('calDate');
+			});
 		},
 		classes: {
 			months: {

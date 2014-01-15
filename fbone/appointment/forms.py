@@ -1,6 +1,8 @@
+import datetime
+
 from flask.ext.wtf import Form
 from wtforms import (ValidationError, HiddenField, TextField, TextAreaField,
-                     SubmitField, DateTimeField, SelectField)
+                     SubmitField, DateTimeField, DateField, SelectField)
 from wtforms.validators import Required, Length, Email
 from flask.ext.wtf.html5 import EmailField
 
@@ -79,6 +81,7 @@ class MakeAppointmentForm(Form):
                         Length(EMAIL_LEN_MIN, EMAIL_LEN_MAX)])
     start_datetime = DateTimeField(u'Start Time')
     end_datetime = DateTimeField(u'End Time')
+    date = DateField(u'Date', default=datetime.date.today())
     timezone = SelectOptgroupField(u'Timezone',
                                    [Length(TIMEZONE_LEN_MIN,
                                            TIMEZONE_LEN_MAX)],

@@ -14,7 +14,8 @@ appointment = Blueprint('appointment', __name__, url_prefix='/appointment')
 
 @appointment.route('/create', methods=['GET', 'POST'])
 def create():
-    form = MakeAppointmentForm(next=request.args.get('next'))
+    form = MakeAppointmentForm(formdata=request.args,
+                               next=request.args.get('next'))
     if form.validate_on_submit():
         appointment = Appointment()
         form.populate_obj(appointment)
