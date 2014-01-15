@@ -10,9 +10,9 @@ class Appointment(db.Model):
     __tablename__ = 'appointments'
 
     id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(USERNAME_LEN_MAX), nullable=False)
-    last_name = db.Column(db.String(USERNAME_LEN_MAX), nullable=False)
+    name = db.Column(db.String(USERNAME_LEN_MAX), nullable=False)
     email = db.Column(db.String(EMAIL_LEN_MAX), nullable=False)
     start_datetime = db.Column(db.DateTime, nullable=False)
     end_datetime = db.Column(db.DateTime, nullable=False)
-    content = db.Column(db.String(CONTENT_LEN_MAX), nullable=False)
+    timezone = db.Column(db.Integer, nullable=False)
+    message = db.Column(db.String(CONTENT_LEN_MAX), nullable=False)

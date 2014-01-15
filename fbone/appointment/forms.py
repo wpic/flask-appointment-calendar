@@ -63,12 +63,9 @@ class SelectOptgroupField(SelectField):
 class MakeAppointmentForm(Form):
     next = HiddenField()
 
-    first_name = TextField(u'Your first name.',
-                           [Required(),
-                            Length(USERNAME_LEN_MIN, USERNAME_LEN_MAX)])
-    last_name = TextField(u'Your last name.',
-                          [Required(),
-                           Length(USERNAME_LEN_MIN, USERNAME_LEN_MAX)])
+    name = TextField(u'Name',
+                     [Required(),
+                      Length(USERNAME_LEN_MIN, USERNAME_LEN_MAX)])
     email = EmailField(u'Email',
                        [Required(),
                         Email(),
@@ -77,11 +74,7 @@ class MakeAppointmentForm(Form):
     end_datetime = DateTimeField(u'End Time')
     timezone = SelectOptgroupField(u'Timezone',
                                    choices=TIMEZONES)
-    content = TextAreaField(u'Content',
+    message = TextAreaField(u'Message',
                             [Required(),
                              Length(CONTENT_LEN_MIN, CONTENT_LEN_MAX)])
     submit = SubmitField('OK')
-
-    def validate_email(self, field):
-        if User.query.filter_by(email=field.data).first() is not None:
-            raise ValidationError(u'This email is taken')
