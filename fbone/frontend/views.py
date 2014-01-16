@@ -45,12 +45,8 @@ def create_or_login(resp):
 def index():
     current_app.logger.debug('debug')
 
-    if current_user.is_authenticated():
-        return redirect(url_for('user.index'))
-
-    page = int(request.args.get('page', 1))
-    pagination = User.query.paginate(page=page, per_page=10)
-    return render_template('index.html', pagination=pagination)
+    session.update(request.args.to_dict())
+    return render_template('index.html')
 
 
 @frontend.route('/search')

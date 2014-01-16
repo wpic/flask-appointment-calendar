@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from flask import (Blueprint, render_template, request,
-                   flash, url_for, redirect)
+                   flash, url_for, redirect, session)
 from flask.ext.mail import Message
 
 from ..extensions import db, mail
@@ -16,6 +16,12 @@ appointment = Blueprint('appointment', __name__, url_prefix='/appointment')
 def create():
     form = MakeAppointmentForm(formdata=request.args,
                                next=request.args.get('next'))
+
+    # Dump all available data from request or session object to form fields.
+    for key in form.data.keys():
+        setattr(getattr(form, key), 'data',
+                request.args.get(key) or session.get(key))
+
     if form.validate_on_submit():
         appointment = Appointment()
         form.populate_obj(appointment)
