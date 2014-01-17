@@ -32,6 +32,24 @@ def create():
             """
             flash(flash_message)
 
+            mail_message = Message("WPIC Web Calendar Appointment@%s" % form.date.data,
+                                   recipients=[form.email.data])
+            mail_message.body = """Dear %s:
+
+Congratulations! You've just made an appointment on WPIC Web
+Calendar system. Here's the appointment details:
+
+----
+Date: %s
+Timezone: %s
+Your message:
+%s
+----
+            """ % (form.name.data, form.date.data,
+                   form.timezone.data, form.message.data)
+
+            mail.send(mail_message)
+
             return redirect(url_for('appointment.create'))
 
     elif request.method == 'GET':

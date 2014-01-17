@@ -9,6 +9,7 @@ from flask.ext.babel import Babel
 from flask.ext.debugtoolbar import DebugToolbarExtension
 
 from .config import DefaultConfig
+from .production_config import ProductionConfig
 from .user import User, user
 from .appointment import Appointment, appointment
 from .settings import settings
@@ -38,7 +39,8 @@ def create_app(config=None, app_name=None, blueprints=None):
     if blueprints is None:
         blueprints = DEFAULT_BLUEPRINTS
 
-    app = Flask(app_name, instance_path=INSTANCE_FOLDER_PATH, instance_relative_config=True)
+    app = Flask(app_name, instance_path=INSTANCE_FOLDER_PATH,
+                instance_relative_config=True)
     configure_app(app, config)
     configure_hook(app)
     configure_blueprints(app, blueprints)
