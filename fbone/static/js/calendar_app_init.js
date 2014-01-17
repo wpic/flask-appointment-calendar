@@ -43,6 +43,22 @@
 			$('.cal-month-box *[data-cal-date]').click(function() {
 				window.location.href = "/appointment/create?date=" + $(this).data('calDate');
 			});
+
+            // disable double click events in cal-cell of month view
+            $('.cal-month-box .cal-cell1').off('dblclick');
+            // delegate click event to its children
+            $('.cal-month-box .cal-cell1').click(function() {
+                this.children[0].children[0].click();
+                return false;
+            })
+
+            // disable original click events on cal-cell of year view
+            $('.cal-year-box .cal-cell').off('dblclick').off('click');
+            // delegate click event to its children
+            $('.cal-year-box .cal-cell').click(function() {
+                this.children[0].click();
+                return false;
+            })
 		},
 		classes: {
 			months: {
