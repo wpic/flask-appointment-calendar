@@ -79,8 +79,10 @@ class MakeAppointmentForm(Form):
                        [Required(),
                         Email(),
                         Length(EMAIL_LEN_MIN, EMAIL_LEN_MAX)])
-    start_datetime = DateTimeField(u'Start Time')
-    end_datetime = DateTimeField(u'End Time')
+    start_datetime = DateTimeField(u'Start Time',
+                                   [Required()])
+    end_datetime = DateTimeField(u'End Time',
+                                 [Required()])
     date = DateField(u'Date', default=datetime.date.today())
     timezone = SelectOptgroupField(u'Timezone',
                                    [Length(TIMEZONE_LEN_MIN,

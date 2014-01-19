@@ -161,44 +161,54 @@
 </div>
 {% endmacro %}
 
+{% macro render_field(field) %}
+{% if field.type == "RadioField" %}
+    {{ render_radio(field) }}
+{% elif field.type == "SelectField" %}
+    {{ render_select(field) }}
+{% elif field.type == "SelectOptgroupField" %}
+    {{ render_select_optgroup(field) }}
+{% elif field.type == "BooleanField" %}
+    {{ render_checkbox(field) }}
+{% elif field.type == "SubmitField" %}
+    {{ render_action(field) }}
+{% elif field.type == "TextAreaField" %}
+    {{ render_textarea(field) }}
+{% elif field.type == "DateField" %}
+    {{ render_datepicker(field) }}
+{% elif field.type == "DateTimeField" %}
+    {{ render_datetimepicker(field) }}
+{% elif field.type == "TextField" %}
+    {% if focus %}
+    {{ render_input(field) }}
+    {% set focus = False %}
+{% else %}
+    {{ render_input(field) }}
+    {% endif %}
+{% else %}
+    {{ render_input(field) }}
+{% endif %}
+{% endmacro %}
+
 {% macro render_form(url, form, horizontal=False, legend=None, confirm_msg=None) %}
 <form class="{% if horizontal %}form-horizontal{% endif %}" method="POST" action="{{ url }}"
     {% if confirm_msg %}onsubmit='return confirm("{{ confirm_msg }}");' {% endif %}
     {% if form.multipart %}enctype="multipart/form-data"{% endif %} >
     {{ form.hidden_tag() }}
+    {% set focus = True %}
     <fieldset>
-        {% if legend %}
-        <legend>{{ legend|safe }}</legend>
-        {% endif %}
-        {% set focus = True %}
+        <legend><small>Required:</small></legend>
         {% for field in form %}
-            {% if field.type != "HiddenField" and field.type != "CSRFTokenField" %}
-                {% if field.type == "RadioField" %}
-                    {{ render_radio(field) }}
-                {% elif field.type == "SelectField" %}
-                    {{ render_select(field) }}
-                {% elif field.type == "SelectOptgroupField" %}
-                    {{ render_select_optgroup(field) }}
-                {% elif field.type == "BooleanField" %}
-                    {{ render_checkbox(field) }}
-                {% elif field.type == "SubmitField" %}
-                    {{ render_action(field) }}
-                {% elif field.type == "TextAreaField" %}
-                    {{ render_textarea(field) }}
-                {% elif field.type == "DateField" %}
-                    {{ render_datepicker(field) }}
-                {% elif field.type == "DateTimeField" %}
-                    {{ render_datetimepicker(field) }}
-                {% elif field.type == "TextField" %}
-                    {% if focus %}
-                        {{ render_input(field) }}
-                        {% set focus = False %}
-                    {% else %}
-                        {{ render_input(field) }}
-                    {% endif %}
-                {% else %}
-                    {{ render_input(field) }}
-                {% endif %}
+            {% if field.type != "HiddenField" and field.type != "CSRFTokenField" and field.flags.required %}
+                {{ render_field(field) }}
+            {% endif %}
+        {% endfor %}
+    </fieldset>
+    <fieldset>
+        <legend><small>Optional:</small></legend>
+        {% for field in form %}
+            {% if field.type != "HiddenField" and field.type != "CSRFTokenField" and not field.flags.required %}
+                {{ render_field(field) }}
             {% endif %}
         {% endfor %}
     </fieldset>

@@ -68,7 +68,9 @@ Your message:
                 setattr(getattr(form, key), 'data',
                         request.args.get(key) or session.get(key))
 
-        return render_template('appointment/create.html', form=form)
+        return render_template('appointment/create.html',
+                               form=form,
+                               horizontal=True)
 
     else:
         abort(405)
