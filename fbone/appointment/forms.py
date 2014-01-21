@@ -75,14 +75,13 @@ class MakeAppointmentForm(Form):
     name = TextField(u'Name',
                      [Required(),
                       Length(USERNAME_LEN_MIN, USERNAME_LEN_MAX)])
-    email = EmailField(u'Email',
-                       [Required(),
-                        Email(),
-                        Length(EMAIL_LEN_MIN, EMAIL_LEN_MAX)])
     start_datetime = DateTimeField(u'Start Time',
                                    [Required()])
     end_datetime = DateTimeField(u'End Time',
                                  [Required()])
+    email = EmailField(u'Email',
+                       [Email(),
+                        Length(EMAIL_LEN_MIN, EMAIL_LEN_MAX)])
     date = DateField(u'Date', default=datetime.date.today())
     timezone = SelectOptgroupField(u'Timezone',
                                    [Length(TIMEZONE_LEN_MIN,

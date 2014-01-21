@@ -73,10 +73,7 @@
 
 {% macro render_datepicker(field) %}
 <div class="control-group{% if field.errors %} error{% endif %}">
-    <label class="control-label"
-        for="{{ field.id }}">
-        {{ field.label }}
-    </label>
+    {{ field.label(class_="control-label") }}
     <div class="controls">
     	<div class="datetimepicker-no-time input-append">
         	{{ field() }}
@@ -96,10 +93,7 @@
 
 {% macro render_datetimepicker(field) %}
 <div class="control-group{% if field.errors %} error{% endif %}">
-    <label class="control-label"
-           for="{{ field.id }}">
-        {{ field.label }}
-    </label>
+    {{ field.label(class_="control-label") }}
     <div class="controls">
         <div class="datetimepicker input-append date">
             {{ field() }}
@@ -119,10 +113,7 @@
 
 {% macro render_textarea(field) %}
 <div class="control-group{% if field.errors %} error{% endif %}">
-    <label class="control-label"
-        for="{{ field.id }}">
-        {{ field.label }}
-    </label>
+    {{ field.label(class_="control-label") }}
     <div class="controls">
         {{ field(class="span6", rows="5") }}
         <span class="help-inline">{{ field.description }}</span>
@@ -136,11 +127,8 @@
 {% endmacro %}
 
 {% macro render_input(field) %}
-<div class="control-group{% if field.errors %} error{% endif %}">
-    <label class="control-label"
-        for="{{ field.id }}">
-        {{ field.label }}
-    </label>
+<div class="control-group {% if field.errors %} error{% endif %}">
+    {{ field.label(class_="control-label") }}
     <div class="controls">
         {{ field }}
         <span class="help-inline">{{ field.description }}</span>
@@ -196,16 +184,14 @@
     {% if form.multipart %}enctype="multipart/form-data"{% endif %} >
     {{ form.hidden_tag() }}
     {% set focus = True %}
-    <fieldset>
-        <legend><small>Required:</small></legend>
+    <fieldset required="true">
         {% for field in form %}
             {% if field.type != "HiddenField" and field.type != "CSRFTokenField" and field.flags.required %}
                 {{ render_field(field) }}
             {% endif %}
         {% endfor %}
     </fieldset>
-    <fieldset>
-        <legend><small>Optional:</small></legend>
+    <fieldset required="false">
         {% for field in form %}
             {% if field.type != "HiddenField" and field.type != "CSRFTokenField" and not field.flags.required %}
                 {{ render_field(field) }}

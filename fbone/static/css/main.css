@@ -126,3 +126,7 @@ table .headerSortUp:after {
 .table-borderless th{
     border: 0 !important
 }
+
+fieldset[required="true"] label {
+    color: red;
+}
