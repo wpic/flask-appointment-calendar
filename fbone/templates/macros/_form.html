@@ -52,7 +52,7 @@
 <div class="control-group{% if field.errors %} error{% endif %}">
     {{ field.label(class_="control-label") }}
     <div class="controls">
-        <select id="{{ field.id }} " name="{{ field.name }}" class="span6">
+        <select id="{{ field.id }}" name="{{ field.name }}" class="span6">
             {% for optgroup in field.choices.keys()|sort %}
             <optgroup name="{{ optgroup }}" label="----">
                 {% for value, label in field.choices[optgroup] %}
