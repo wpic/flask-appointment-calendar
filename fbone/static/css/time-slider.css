@@ -1,0 +1,35 @@
+#time-slider{
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.bar{
+    position: absolute;
+    top: 0;
+    background: #5EB95E;
+    height:100%;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+}
+
+/*modify jquery ui css*/
+#slider-range{
+    background: #DD514C;
+    border: 1px #DD514C solid;
+}
+
+.ui-slider-horizontal
+.ui-slider-range {
+    opacity: 0.8;
+}
+
+.ui-slider
+.ui-slider-handle{
+    width: 15px;
+    margin: 0;
+    cursor: pointer;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
