@@ -3,6 +3,7 @@
 import os
 
 from flask import Flask, request, render_template
+from flask.ext import login
 from flask.ext.admin import Admin
 from flask.ext.admin.contrib.sqla import ModelView
 from flask.ext.babel import Babel
@@ -183,9 +184,13 @@ def configure_error_handlers(app):
 
 
 def configure_admin(app):
+    class MyView(ModelView):
+        def is_accessible(self):
+            return login.current_user.is_authenticated()
+
     admin = Admin(app)
-    admin.add_view(ModelView(User, db.session))
-    admin.add_view(ModelView(Appointment, db.session))
+    admin.add_view(MyView(User, db.session))
+    admin.add_view(MyView(Appointment, db.session))
 
 
 def configure_debugtoolbar(app):
