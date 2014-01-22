@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from datetime import datetime
+import smtplib
 
 from flask import (Blueprint, render_template, request, abort,
-                   flash, url_for, redirect, session)
+                   flash, url_for, redirect, session, current_app)
 from flask.ext.mail import Message
 
 from ..extensions import db, mail
@@ -17,9 +18,17 @@ appointment = Blueprint('appointment', __name__, url_prefix='/appointment')
 @appointment.route('/create', methods=['GET', 'POST'])
 def create():
     if request.method == 'POST':
+        wpic_no_send_email = u"no-send@wpic.com"
         form = MakeAppointmentForm(next=request.args.get('next'))
 
-        if form.validate_on_submit():
+        if form.email.data is u"" or form.email.data is "":
+            form.email.data = wpic_no_send_email
+
+        if not form.validate_on_submit():
+            return render_template('appointment/create.html',
+                                   form=form,
+                                   horizontal=True)
+        else:
             appointment = Appointment()
             form.populate_obj(appointment)
 
@@ -32,7 +41,8 @@ def create():
             """
             flash(flash_message)
 
-            mail_message = Message("WPIC Web Calendar Appointment@%s" % form.date.data,
+            mail_message = Message("WPIC Web Calendar Appointment@%s" %
+                                   form.date.data,
                                    recipients=[form.email.data])
             mail_message.body = """Dear %s:
 
@@ -48,7 +58,11 @@ Your message:
             """ % (form.name.data, form.date.data,
                    form.timezone.data, form.message.data)
 
-            mail.send(mail_message)
+            if form.email.data is not wpic_no_send_email:
+                try:
+                    mail.send(mail_message)
+                except smtplib.SMTPException as e:
+                    current_app.logger.debug("Send email faied, %s", e.message)
 
             return redirect(url_for('appointment.create'))
 
