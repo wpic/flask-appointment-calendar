@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from datetime import datetime
+from datetime import datetime, date
 import smtplib
 
 from flask import (Blueprint, render_template, request, abort,
@@ -13,6 +13,23 @@ from .models import Appointment
 
 
 appointment = Blueprint('appointment', __name__, url_prefix='/appointment')
+
+
+def get_epoch_time(date_obj, minutes, timezone):
+    """ Get seconds from epoch
+
+    date_obj: a datetime.date object
+    minutes: an integer in [0, 1400]
+    timezone: an integer in [-12, 12]
+
+    return: seconds from epcoh time.
+    """
+    epoch_date = date(1970, 1, 1)
+    seconds = (date_obj - epoch_date).total_seconds()
+    seconds += minutes * 60
+    seconds -= timezone * 3600
+
+    return int(seconds)
 
 
 @appointment.route('/create', methods=['GET', 'POST'])
@@ -31,6 +48,12 @@ def create():
         else:
             appointment = Appointment()
             form.populate_obj(appointment)
+            appointment.start_time = get_epoch_time(form.date.data,
+                                                    int(form.start_time.data),
+                                                    float(form.timezone.data))
+            appointment.end_time = get_epoch_time(form.date.data,
+                                                  int(form.end_time.data),
+                                                  float(form.timezone.data))
 
             db.session.add(appointment)
             db.session.commit()
