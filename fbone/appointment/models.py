@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from ..extensions import db
-from ..utils import (get_current_time, USERNAME_LEN_MAX)
+from ..utils import USERNAME_LEN_MAX
 from .forms import MESSAGE_LEN_MAX, EMAIL_LEN_MAX, TIMEZONE_LEN_MAX
 
 

@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from werkzeug.urls import url_quote
-
 from fbone.user import User
-from fbone.extensions import db, mail
+from fbone.extensions import mail
 
 from tests import TestCase
 
@@ -22,7 +20,9 @@ class TestFrontend(TestCase):
             'name': 'new_user',
             'agree': True,
         }
-        response = self.client.post('/signup', data=data, follow_redirects=True)
+        response = self.client.post('/signup',
+                                    data=data,
+                                    follow_redirects=True)
         assert "Hello" in response.data
         new_user = User.query.filter_by(name=data['name']).first()
         assert new_user is not None
@@ -59,8 +59,8 @@ class TestUser(TestCase):
     def test_send_email(self):
         with mail.record_messages() as outbox:
             mail.send_message(subject='testing',
-                    body='test',
-                    recipients=['tester@example.com'])
+                              body='test',
+                              recipients=['tester@example.com'])
 
             assert len(outbox) == 1
             assert outbox[0].subject == "testing"

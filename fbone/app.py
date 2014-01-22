@@ -10,7 +10,7 @@ from flask.ext.babel import Babel
 from flask.ext.debugtoolbar import DebugToolbarExtension
 
 from .config import DefaultConfig
-from .production_config import ProductionConfig
+# from .production_config import ProductionConfig
 from .user import User, user
 from .appointment import Appointment, appointment
 from .settings import settings
@@ -68,7 +68,8 @@ def configure_app(app, config=None):
         app.config.from_object(config)
 
     # Use instance folder instead of env variables to make deployment easier.
-    #app.config.from_envvar('%s_APP_CONFIG' % DefaultConfig.PROJECT.upper(), silent=True)
+    # app.config.from_envvar('%s_APP_CONFIG' % DefaultConfig.PROJECT.upper(),
+    #                        silent=True)
 
 
 def configure_extensions(app):
@@ -135,7 +136,9 @@ def configure_logging(app):
     app.logger.setLevel(logging.INFO)
 
     info_log = os.path.join(app.config['LOG_FOLDER'], 'info.log')
-    info_file_handler = logging.handlers.RotatingFileHandler(info_log, maxBytes=100000, backupCount=10)
+    info_file_handler = logging.handlers.RotatingFileHandler(info_log,
+                                                             maxBytes=100000,
+                                                             backupCount=10)
     info_file_handler.setLevel(logging.INFO)
     info_file_handler.setFormatter(logging.Formatter(
         '%(asctime)s %(levelname)s: %(message)s '

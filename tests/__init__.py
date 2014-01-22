@@ -13,7 +13,6 @@ from fbone import create_app
 from fbone.user import User, ADMIN, USER, ACTIVE
 from fbone.config import TestConfig
 from fbone.extensions import db
-from fbone.utils import MALE
 
 
 class TestCase(Base):

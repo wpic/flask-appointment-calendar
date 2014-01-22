@@ -87,7 +87,8 @@ def pretty_date(dt, default=None):
 
 
 def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_AVATAR_EXTENSIONS
+    return '.' in filename and \
+        filename.rsplit('.', 1)[1] in ALLOWED_AVATAR_EXTENSIONS
 
 
 def id_generator(size=10, chars=string.ascii_letters + string.digits):

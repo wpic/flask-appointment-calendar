@@ -76,7 +76,7 @@ Your message:
                 setattr(getattr(form, key), 'data',
                         datetime.strptime(request.args.get(key) or
                                           session.get(key) or
-                                          datetime.today().strftime('%Y-%m-%d'),
+                                          datetime.today().strftime('%Y-%m-%d'),  # NOQA
                                           "%Y-%m-%d"))
             else:
                 setattr(getattr(form, key), 'data',

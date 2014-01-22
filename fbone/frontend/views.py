@@ -6,11 +6,13 @@ from flask import (Blueprint, render_template, current_app, request,
                    flash, url_for, redirect, session, abort)
 from flask.ext.mail import Message
 from flask.ext.babel import gettext as _
-from flask.ext.login import login_required, login_user, current_user, logout_user, confirm_login, login_fresh
+from flask.ext.login import (login_required, login_user, current_user,
+                             logout_user, confirm_login, login_fresh)
 
 from ..user import User
 from ..extensions import db, mail, login_manager, oid
-from .forms import SignupForm, LoginForm, RecoverPasswordForm, ReauthForm, ChangePasswordForm, OpenIDForm
+from .forms import (SignupForm, LoginForm, RecoverPasswordForm, ReauthForm,
+                    ChangePasswordForm, OpenIDForm)
 
 
 frontend = Blueprint('frontend', __name__)
@@ -27,7 +29,9 @@ def login_openid():
         openid = form.openid.data
         current_app.logger.debug('login with openid(%s)...' % openid)
         return oid.try_login(openid, ask_for=['email', 'fullname', 'nickname'])
-    return render_template('frontend/login_openid.html', form=form, error=oid.fetch_error())
+    return render_template('frontend/login_openid.html',
+                           form=form,
+                           error=oid.fetch_error())
 
 
 @oid.after_login
@@ -36,9 +40,11 @@ def create_or_login(resp):
     if user and login_user(user):
         flash('Logged in', 'success')
         return redirect(oid.get_next_url() or url_for('user.index'))
-    return redirect(url_for('frontend.create_profile', next=oid.get_next_url(),
-            name=resp.fullname or resp.nickname, email=resp.email,
-            openid=resp.identity_url))
+    return redirect(url_for('frontend.create_profile',
+                            next=oid.get_next_url(),
+                            name=resp.fullname or resp.nickname,
+                            email=resp.email,
+                            openid=resp.identity_url))
 
 
 @frontend.route('/')
@@ -58,7 +64,9 @@ def search():
         pagination = User.search(keywords).paginate(page, 1)
     else:
         flash(_('Please input keyword(s)'), 'error')
-    return render_template('frontend/search.html', pagination=pagination, keywords=keywords)
+    return render_template('frontend/search.html',
+                           pagination=pagination,
+                           keywords=keywords)
 
 
 @frontend.route('/login', methods=['GET', 'POST'])
@@ -71,7 +79,7 @@ def login():
 
     if form.validate_on_submit():
         user, authenticated = User.authenticate(form.login.data,
-                                    form.password.data)
+                                                form.password.data)
 
         if user and authenticated:
             remember = request.form.get('remember') == 'y'
@@ -91,7 +99,7 @@ def reauth():
 
     if request.method == 'POST':
         user, authenticated = User.authenticate(current_user.name,
-                                    form.password.data)
+                                                form.password.data)
         if user and authenticated:
             confirm_login()
             current_app.logger.debug('reauth: %s' % session['_fresh'])
@@ -176,9 +184,16 @@ def reset_password():
             db.session.add(user)
             db.session.commit()
 
-            url = url_for('frontend.change_password', email=user.email, activation_key=user.activation_key, _external=True)
-            html = render_template('macros/_reset_password.html', project=current_app.config['PROJECT'], username=user.name, url=url)
-            message = Message(subject='Reset your password in ' + current_app.config['PROJECT'], html=html, recipients=[user.email])
+            url = url_for('frontend.change_password',
+                          email=user.email,
+                          activation_key=user.activation_key, _external=True)
+            html = render_template('macros/_reset_password.html',
+                                   project=current_app.config['PROJECT'],
+                                   username=user.name, url=url)
+            message = Message(subject='Reset your password in ' +
+                              current_app.config['PROJECT'],
+                              html=html,
+                              recipients=[user.email])
             mail.send(message)
 
             return render_template('frontend/reset_password.html', form=form)
