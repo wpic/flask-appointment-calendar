@@ -28,6 +28,8 @@ function slideTime(event, ui){
   //             "minutes1: " + minutes1 + "\n" +
   //             "startTime: " + startTime + "\n" +
   //             "endTime: " + endTime)
+  $("#start_time").val(val0);
+  $("#end_time").val(val1);
   $("#time").text(startTime + ' - ' + endTime);
 
   if(isAvailableTimeRange([val0, val1], $(this).slider("option", "available"))){
@@ -52,6 +54,8 @@ function createTime(event, ui) {
 
   var startTime = formatTime(hours0, minutes0);
   var endTime = formatTime(hours1, minutes1);
+  $("#start_time").val(val0);
+  $("#end_time").val(val1);
   $("#time").text(startTime + ' - ' + endTime);
 }
 

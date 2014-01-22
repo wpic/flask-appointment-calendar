@@ -1,12 +1,11 @@
 import datetime
 
 from flask.ext.wtf import Form
-from wtforms import (ValidationError, HiddenField, TextField, TextAreaField,
-                     SubmitField, DateTimeField, DateField, SelectField)
+from wtforms import (Field, HiddenField, TextField,
+                     TextAreaField, SubmitField, DateField, SelectField)
 from wtforms.validators import Required, Length, Email
 from flask.ext.wtf.html5 import EmailField
 
-from ..user import User
 from ..utils import (USERNAME_LEN_MIN, USERNAME_LEN_MAX)
 
 EMAIL_LEN_MIN = 4
@@ -69,16 +68,19 @@ class SelectOptgroupField(SelectField):
         return True
 
 
+class TimeRangeSliderField(Field):
+    pass
+
+
 class MakeAppointmentForm(Form):
     next = HiddenField()
 
     name = TextField(u'Name',
                      [Required(),
                       Length(USERNAME_LEN_MIN, USERNAME_LEN_MAX)])
-    start_datetime = DateTimeField(u'Start Time',
-                                   [Required()])
-    end_datetime = DateTimeField(u'End Time',
-                                 [Required()])
+    time_range = TimeRangeSliderField(u'Time Range')
+    start_time = HiddenField(u'start_time', [Required()])
+    end_time = HiddenField(u'end_time', [Required()])
     email = EmailField(u'Email',
                        [Email(),
                         Length(EMAIL_LEN_MIN, EMAIL_LEN_MAX)])

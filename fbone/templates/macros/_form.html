@@ -71,6 +71,27 @@
 </div>
 {% endmacro %}
 
+{% macro render_time_range_slider(field) %}
+<div class="control-group{% if field.errors %} error{% endif %}">
+    {{ field.label(class_="control-label") }}
+    <div class="controls">
+        <div class="time-picker">
+	        <div id="time-slider">
+		        <div id="slider-range"></div>
+	        </div>
+	        <div id="time"></div>
+	        <div id="time-notify"></div>
+        </div>
+        <span class="help-inline">{{ field.description }}</span>
+        {% if field.errors -%}
+            {% for error in field.errors -%}
+            <span class="help-block error">{{ error }}</span>
+            {%- endfor %}
+        {%- endif %}
+    </div>
+</div>
+{% endmacro %}
+
 {% macro render_datepicker(field) %}
 <div class="control-group{% if field.errors %} error{% endif %}">
     {{ field.label(class_="control-label") }}
@@ -166,6 +187,8 @@
     {{ render_datepicker(field) }}
 {% elif field.type == "DateTimeField" %}
     {{ render_datetimepicker(field) }}
+{% elif field.type == "TimeRangeSliderField" %}
+    {{ render_time_range_slider(field) }}
 {% elif field.type == "TextField" %}
     {% if focus %}
     {{ render_input(field) }}

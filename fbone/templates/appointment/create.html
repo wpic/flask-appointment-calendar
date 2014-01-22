@@ -32,15 +32,6 @@
 
 {% block body %}
 {{ render_form(url_for('appointment.create'), form, horizontal) }}
-
-<div class="time-picker">
-	<div id="time-slider">
-		<div id="slider-range"></div>
-	</div>
-	<div id="time"></div>
-	<div id="time-notify"></div>
-</div>
-
 {% endblock %}
 
 {% block js_user %}
