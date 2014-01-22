@@ -28,18 +28,16 @@ class TestCase(Base):
 
     def init_data(self):
 
-        demo = User(
-                name=u'demo',
-                email=u'demo@example.com',
-                password=u'123456',
-                role_code=USER,
-                status_code=ACTIVE,
-        admin = User(
-                name=u'admin',
-                email=u'admin@example.com',
-                password=u'123456',
-                role_code=ADMIN,
-                status_code=ACTIVE,
+        demo = User(name=u'demo',
+                    email=u'demo@example.com',
+                    password=u'123456',
+                    role_code=USER,
+                    status_code=ACTIVE)
+        admin = User(name=u'admin',
+                     email=u'admin@example.com',
+                     password=u'123456',
+                     role_code=ADMIN,
+                     status_code=ACTIVE)
         db.session.add(demo)
         db.session.add(admin)
         db.session.commit()

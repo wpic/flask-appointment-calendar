@@ -56,23 +56,6 @@ class TestUser(TestCase):
         self.login('demo', '123456')
         self._test_get_request('/user/', 'user/index.html')
 
-    def test_follow_unfollow(self):
-        user1 = User(name='tester1', email='tester1@example.com', password='123456')
-        db.session.add(user1)
-        user2 = User(name='tester2', email='tester2@example.com', password='223456')
-        db.session.add(user2)
-        db.session.commit()
-
-        user1.follow(user2)
-        assert user1.num_following == 1
-        assert user1.get_following_query().first().id == user2.id
-        assert user2.num_followers == 1
-        assert user2.get_followers_query().first().id == user1.id
-
-        user1.unfollow(user2)
-        assert user1.num_following == 0
-        assert user2.num_followers == 0
-
     def test_send_email(self):
         with mail.record_messages() as outbox:
             mail.send_message(subject='testing',
@@ -84,12 +67,6 @@ class TestUser(TestCase):
 
 
 class TestSettings(TestCase):
-
-    def test_profile(self):
-        self.login('demo', '123456')
-        response = self.client.get('/settings/profile')
-        self.assert200(response)
-        self.assertTemplateUsed("settings/profile.html")
 
     def test_password(self):
         self.login('demo', '123456')
