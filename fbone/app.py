@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+from datetime import datetime
 
 from flask import Flask, request, render_template
 from flask.ext import login
@@ -187,13 +188,22 @@ def configure_error_handlers(app):
 
 
 def configure_admin(app):
-    class MyView(ModelView):
+    class UserView(ModelView):
+        def is_accessible(self):
+            return login.current_user.is_authenticated()
+
+    class AppointmentView(ModelView):
+        column_formatters = {
+            "start_time": lambda v, c, m, p: datetime.fromtimestamp(m.start_time),  # NOQA
+            "end_time": lambda v, c, m, p: datetime.fromtimestamp(m.end_time)
+        }
+
         def is_accessible(self):
             return login.current_user.is_authenticated()
 
     admin = Admin(app)
-    admin.add_view(MyView(User, db.session))
-    admin.add_view(MyView(Appointment, db.session))
+    admin.add_view(UserView(User, db.session))
+    admin.add_view(AppointmentView(Appointment, db.session))
 
 
 def configure_debugtoolbar(app):
