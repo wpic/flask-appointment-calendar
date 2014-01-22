@@ -3,8 +3,8 @@
 from datetime import datetime, date
 import smtplib
 
-from flask import (Blueprint, render_template, request, abort,
-                   flash, url_for, redirect, session, current_app)
+from flask import (Blueprint, render_template, request, abort, flash, url_for,
+                   redirect, session, current_app, jsonify, make_response)
 from flask.ext.mail import Message
 
 from ..extensions import db, mail
@@ -16,11 +16,11 @@ appointment = Blueprint('appointment', __name__, url_prefix='/appointment')
 
 
 def get_epoch_time(date_obj, minutes, timezone):
-    """ Get seconds from epoch
+    """Get seconds from epoch
 
     date_obj: a datetime.date object
     minutes: an integer in [0, 1400]
-    timezone: an integer in [-12, 12]
+    timezone: an float in [-12, 12]
 
     return: seconds from epcoh time.
     """
@@ -45,6 +45,31 @@ def appointment_ok(appointment):
     if start == 1 or end == 1:
         return False
     return True
+
+
+@appointment.route('/')
+def all_appointments():
+    """Returns a json object which contains all appointments in a specific
+    date.
+    """
+    if not request.args.get('date'):
+        date_obj = date.today()
+    else:
+        date_obj = datetime.strptime(request.args.get('date'),
+                                     "%Y-%m-%d").date()
+    timezone = float(str(request.args.get('timezone', 0.00)))
+    start_time = get_epoch_time(date_obj, 0, timezone)
+    end_time = get_epoch_time(date_obj, 1440, timezone)
+
+    result = Appointment.query.filter(Appointment.start_time >= start_time,
+                                      Appointment.end_time <= end_time).\
+        order_by(Appointment.start_time)
+
+    appointment_time = [[a.start_time, a.end_time] for a in result]
+
+    return jsonify(appointment_time=appointment_time,
+                   date=str(date_obj),
+                   timezone=timezone)
 
 
 @appointment.route('/create', methods=['GET', 'POST'])
