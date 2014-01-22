@@ -32,6 +32,21 @@ def get_epoch_time(date_obj, minutes, timezone):
     return int(seconds)
 
 
+def appointment_ok(appointment):
+    start = Appointment.query.filter(Appointment.start_time <=
+                                     appointment.start_time,
+                                     Appointment.end_time >=
+                                     appointment.start_time).count()
+    end = Appointment.query.filter(Appointment.start_time <=
+                                   appointment.end_time,
+                                   Appointment.end_time >=
+                                   appointment.end_time).count()
+
+    if start == 1 or end == 1:
+        return False
+    return True
+
+
 @appointment.route('/create', methods=['GET', 'POST'])
 def create():
     if request.method == 'POST':
@@ -55,8 +70,13 @@ def create():
                                                   int(form.end_time.data),
                                                   float(form.timezone.data))
 
-            db.session.add(appointment)
-            db.session.commit()
+            if appointment_ok(appointment):
+                db.session.add(appointment)
+                db.session.commit()
+            else:
+                flash_message = "Sorry but your appointment time is occupied."
+                flash(flash_message)
+                return redirect(url_for('appointment.create'))
 
             flash_message = """
             Congratulations! You've just made an appointment
