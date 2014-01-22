@@ -93,4 +93,11 @@ function time_slider_init_or_reload (available) {
   renderAvailableBar(available, minutes_a_day);
 }
 
+function timezone_init() {
+  var offset = new Date().getTimezoneOffset();
+  $("#timezone").val((-offset/60).toFixed(2))
+}
+
+timezone_init()
+
 time_slider_init_or_reload([150, 300, 600, 900, 1200, 1320]);
