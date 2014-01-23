@@ -2,9 +2,10 @@
 
 from datetime import datetime, date
 import smtplib
+import time
 
 from flask import (Blueprint, render_template, request, abort, flash, url_for,
-                   redirect, session, current_app, jsonify, make_response)
+                   redirect, session, current_app, jsonify)
 from flask.ext.mail import Message
 
 from ..extensions import db, mail
@@ -30,6 +31,14 @@ def get_epoch_time(date_obj, minutes, timezone):
     seconds -= timezone * 3600
 
     return int(seconds)
+
+
+def get_local_time_minutes(minutes, timezone):
+    date_obj = datetime.fromtimestamp(minutes).time()
+    minutes = date_obj.hour * 60 + date_obj.minute
+    timezone_delta = -time.timezone/3600 - timezone
+    minutes -= 60 * timezone_delta
+    return minutes
 
 
 def appointment_ok(appointment):
@@ -65,9 +74,13 @@ def all_appointments():
                                       Appointment.end_time <= end_time).\
         order_by(Appointment.start_time)
 
-    appointment_time = [[a.start_time, a.end_time] for a in result]
+    apt_time_seconds = [[a.start_time, a.end_time] for a in result]
+    apt_time_slider = [[get_local_time_minutes(a[0], timezone),
+                        get_local_time_minutes(a[1], timezone)]
+                       for a in apt_time_seconds]
 
-    return jsonify(appointment_time=appointment_time,
+    return jsonify(apt_time_seconds=apt_time_seconds,
+                   apt_time_slider=apt_time_slider,
                    date=str(date_obj),
                    timezone=timezone)
 

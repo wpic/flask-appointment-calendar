@@ -58,6 +58,11 @@ function createTime(event, ui) {
 }
 
 function renderAvailableBar(apt_time, bar_length) {
+  if (apt_time.length == 0) {
+	$("<div class=\"bar bar"+i+"\"></div>").appendTo("#time-slider");
+    return;
+  }
+
   for(i = 0; i < apt_time.length; i++){
 	$("<div class=\"bar bar"+i+"\"></div>").appendTo("#time-slider");
 	$(".bar"+i).css({left: (apt_time[i][0] * 100.0)/bar_length + "%",
@@ -74,28 +79,38 @@ function formatTime(hours, minutes) {
   return hours + ":" + minutes;
 }
 
-function time_slider_init_or_reload (apt_time) {
-  var minutes_a_day = 1439;
-
-  $("#slider-range").slider({
-    range: true,
-    min: 0,
-    max: minutes_a_day,
-    values: apt_time[0],
-    apt_time: apt_time,
-    step: 15,
-    slide: slideTime,
-    create: createTime
+function time_slider_init_or_reload () {
+  $.getJSON('/appointment/',
+            {'timezone': $("#timezone").val(), 'date': $("#date").val()},
+            function(data) {
+    var minutes_a_day = 1440;
+    var apt_time = data.apt_time_slider;
+    $("#slider-range").slider({
+      range: true,
+      min: 0,
+      max: minutes_a_day,
+      apt_time: apt_time,
+      values: [0, 0],
+      step: 15,
+      slide: slideTime,
+      create: createTime
+    });
+    renderAvailableBar(apt_time, minutes_a_day);
   });
-
-  renderAvailableBar(apt_time, minutes_a_day);
 }
 
 function timezone_init() {
   var offset = new Date().getTimezoneOffset();
   $("#timezone").val((-offset/60).toFixed(2))
+
+  $("#timezone").change(function() {
+    time_slider_init_or_reload();
+  });
+
+  $("#date").change(function() {
+    time_slider_init_or_reload();
+  });
 }
 
 timezone_init()
-
-time_slider_init_or_reload([[150, 300], [600, 900], [1200, 1320]]);
+time_slider_init_or_reload()
