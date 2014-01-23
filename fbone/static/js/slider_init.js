@@ -1,13 +1,11 @@
-function isAvailableTimeRange(timeRange, available) {
-  for (i = 0; i < available.length - 1; i++) {
-    if ((timeRange[0] >= available[i] && timeRange[1] <= available[i + 1]) &&
-        (timeRange[1] >= available[i] && timeRange[1] <= available[i + 1])) {
-      if (i % 2 == 0)
-        return true;
-    }
+function isTimeRangeAvailable(timeRange, apt_time) {
+  for (i = 0; i < apt_time.length; i++) {
+    if ((apt_time[i][0] > timeRange[0] && apt_time[i][0] < timeRange[1]) ||
+        (apt_time[i][1] > timeRange[0] && apt_time[i][1] < timeRange[1]))
+      return false;
   }
 
-  return false;
+  return true;
 }
 
 function slideTime(event, ui){
@@ -32,7 +30,7 @@ function slideTime(event, ui){
   $("#end_time").val(val1);
   $("#time").text(startTime + ' - ' + endTime);
 
-  if(isAvailableTimeRange([val0, val1], $(this).slider("option", "available"))){
+  if(isTimeRangeAvailable([val0, val1], $(this).slider("option", "apt_time"))){
     $("#time-notify").hide();
     $("input[type=submit]").removeAttr("disabled");
   }
@@ -59,11 +57,11 @@ function createTime(event, ui) {
   $("#time").text(startTime + ' - ' + endTime);
 }
 
-function renderAvailableBar(available, bar_length){
-  for(i = 0; i < available.length; i += 2){
+function renderAvailableBar(apt_time, bar_length) {
+  for(i = 0; i < apt_time.length; i++){
 	$("<div class=\"bar bar"+i+"\"></div>").appendTo("#time-slider");
-	$(".bar"+i).css({left: (available[i] * 100.0)/bar_length + "%",
-                     right:(bar_length - available[i+1]) * 100.0/bar_length+"%"})
+	$(".bar"+i).css({left: (apt_time[i][0] * 100.0)/bar_length + "%",
+                     right:(bar_length - apt_time[i][1]) * 100.0/bar_length+"%"})
   }
 }
 
@@ -76,21 +74,21 @@ function formatTime(hours, minutes) {
   return hours + ":" + minutes;
 }
 
-function time_slider_init_or_reload (available) {
+function time_slider_init_or_reload (apt_time) {
   var minutes_a_day = 1439;
 
   $("#slider-range").slider({
     range: true,
     min: 0,
     max: minutes_a_day,
-    values: [available[0], available[1]],
-    available: available,
+    values: apt_time[0],
+    apt_time: apt_time,
     step: 15,
     slide: slideTime,
     create: createTime
   });
 
-  renderAvailableBar(available, minutes_a_day);
+  renderAvailableBar(apt_time, minutes_a_day);
 }
 
 function timezone_init() {
@@ -100,4 +98,4 @@ function timezone_init() {
 
 timezone_init()
 
-time_slider_init_or_reload([150, 300, 600, 900, 1200, 1320]);
+time_slider_init_or_reload([[150, 300], [600, 900], [1200, 1320]]);

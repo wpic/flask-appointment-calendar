@@ -6,7 +6,7 @@
 .bar{
     position: absolute;
     top: 0;
-    background: #5EB95E;
+    background: #DD514C;
     height:100%;
     -webkit-border-radius: 2px;
     -moz-border-radius: 2px;
@@ -15,8 +15,8 @@
 
 /*modify jquery ui css*/
 #slider-range{
-    background: #DD514C;
-    border: 1px #DD514C solid;
+    background: #5EB95E;
+    border: 1px #5EB95E solid;
 }
 
 .ui-slider-horizontal
