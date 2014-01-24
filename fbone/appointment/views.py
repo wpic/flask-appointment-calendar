@@ -42,6 +42,8 @@ def get_local_time_minutes(minutes, timezone):
 
 
 def appointment_ok(appointment):
+    if appointment.start_time == appointment.end_time:
+        return False, "Start time and end time are the same."
     start = Appointment.query.filter(Appointment.start_time <=
                                      appointment.start_time,
                                      Appointment.end_time >=
@@ -52,8 +54,8 @@ def appointment_ok(appointment):
                                    appointment.end_time).count()
 
     if start == 1 or end == 1:
-        return False
-    return True
+        return False, "Your appointment time is occupied."
+    return True, "Appointment ok."
 
 
 @appointment.route('/')
@@ -108,12 +110,12 @@ def create():
                                                   int(form.end_time.data),
                                                   float(form.timezone.data))
 
-            if appointment_ok(appointment):
+            ok, message = appointment_ok(appointment)
+            if ok:
                 db.session.add(appointment)
                 db.session.commit()
             else:
-                flash_message = "Sorry but your appointment time is occupied."
-                flash(flash_message)
+                flash(message)
                 return redirect(url_for('appointment.create'))
 
             flash_message = """

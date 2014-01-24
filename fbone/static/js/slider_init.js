@@ -1,7 +1,10 @@
-function isTimeRangeAvailable(timeRange, apt_time) {
+function isTimeRangeOK(timeRange, apt_time) {
+  if (timeRange[0] == timeRange[1])
+    return false;
   for (i = 0; i < apt_time.length; i++) {
-    if ((apt_time[i][0] > timeRange[0] && apt_time[i][0] < timeRange[1]) ||
-        (apt_time[i][1] > timeRange[0] && apt_time[i][1] < timeRange[1]))
+    if ((timeRange[0] > apt_time[i][0] && timeRange[0] < apt_time[i][1]) ||
+        (timeRange[1] > apt_time[i][0] && timeRange[1] < apt_time[i][1]) ||
+        (timeRange[0] <= apt_time[i][0] && timeRange[1] >= apt_time[i][1]))
       return false;
   }
 
@@ -18,6 +21,7 @@ function slideTime(event, ui){
 
   var startTime = formatTime(hours0, minutes0);
   var endTime = formatTime(hours1, minutes1);
+  var message;
   // console.log("val0: " + val0 + "\n" +
   //             "val1: " + val1 + "\n" +
   //             "hours0: " + hours0 + "\n" +
@@ -30,12 +34,16 @@ function slideTime(event, ui){
   $("#end_time").val(val1);
   $("#time").text(startTime + ' - ' + endTime);
 
-  if(isTimeRangeAvailable([val0, val1], $(this).slider("option", "apt_time"))){
+  if(isTimeRangeOK([val0, val1], $(this).slider("option", "apt_time"))) {
     $("#time-notify").hide();
     $("input[type=submit]").removeAttr("disabled");
   }
   else {
-    $("#time-notify").text('Sorry but your selection contains unavailable time range').css({color:'#b94a48'});
+    if (val0 == val1)
+      message = "Start time and end time is the same.";
+    else
+      message = "You selection contains occupied time range";
+    $("#time-notify").text(message).css({color: '#B94A48'});
     $("input[type=submit]").attr("disabled", "disabled");
     $("#time-notify").show();
   }
@@ -90,7 +98,7 @@ function time_slider_init_or_reload () {
       min: 0,
       max: minutes_a_day,
       apt_time: apt_time,
-      values: [0, 0],
+      values: [480, 600],
       step: 15,
       slide: slideTime,
       create: createTime
