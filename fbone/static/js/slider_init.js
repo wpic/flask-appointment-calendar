@@ -11,9 +11,20 @@ function isTimeRangeOK(timeRange, apt_time) {
   return true;
 }
 
-function slideTime(event, ui){
-  var val0 = ui.values[0],
-	  val1 = ui.values[1],
+function slideTime(event, ui) {
+  var apt_time = $(this).slider("option", "apt_time");
+  reloadTimeRangeSlider(ui.values, apt_time, event, ui);
+}
+
+function createTime(event, ui) {
+  var apt_time = $(this).slider("option", "apt_time");
+  var timeRange= $(this).slider("option", "values");
+  reloadTimeRangeSlider(timeRange, apt_time, event, ui);
+}
+
+function reloadTimeRangeSlider(timeRange, apt_time, event, ui) {
+  var val0 = timeRange[0],
+      val1 = timeRange[1],
 	  minutes0 = parseInt(val0 % 60, 10),
 	  hours0 = parseInt(val0 / 60 % 24, 10),
 	  minutes1 = parseInt(val1 % 60, 10),
@@ -34,7 +45,7 @@ function slideTime(event, ui){
   $("#end_time").val(val1);
   $("#time").text(startTime + ' - ' + endTime);
 
-  if(isTimeRangeOK([val0, val1], $(this).slider("option", "apt_time"))) {
+  if(isTimeRangeOK([val0, val1], apt_time)) {
     $("#time-notify").hide();
     $("input[type=submit]").removeAttr("disabled");
   }
@@ -47,22 +58,6 @@ function slideTime(event, ui){
     $("input[type=submit]").attr("disabled", "disabled");
     $("#time-notify").show();
   }
-}
-
-function createTime(event, ui) {
-  var values = $(this).slider("option", "values"),
-      val0 = values[0],
-	  val1 = values[1],
-	  minutes0 = parseInt(val0 % 60, 10),
-	  hours0 = parseInt(val0 / 60 % 24, 10),
-	  minutes1 = parseInt(val1 % 60, 10),
-	  hours1 = parseInt(val1 / 60 % 24, 10);
-
-  var startTime = formatTime(hours0, minutes0);
-  var endTime = formatTime(hours1, minutes1);
-  $("#start_time").val(val0);
-  $("#end_time").val(val1);
-  $("#time").text(startTime + ' - ' + endTime);
 }
 
 function renderAvailableBar(apt_time, bar_length) {
@@ -87,9 +82,10 @@ function formatTime(hours, minutes) {
   return hours + ":" + minutes;
 }
 
-function time_slider_init_or_reload () {
+function time_slider_init_or_reload (timeRange) {
   $.getJSON('/appointment/',
-            {'timezone': $("#timezone").val(), 'date': $("#date").val()},
+            {'timezone': $("#timezone").val(),
+             'date': $("#date").val()},
             function(data) {
     var minutes_a_day = 1440;
     var apt_time = data.apt_time_slider;
@@ -98,11 +94,13 @@ function time_slider_init_or_reload () {
       min: 0,
       max: minutes_a_day,
       apt_time: apt_time,
-      values: [480, 600],
+      values: timeRange,
       step: 15,
       slide: slideTime,
       create: createTime
     });
+
+    reloadTimeRangeSlider(timeRange, apt_time, null, null);
     renderAvailableBar(apt_time, minutes_a_day);
   });
 }
@@ -112,13 +110,15 @@ function timezone_init() {
   $("#timezone").val((-offset/60).toFixed(2))
 
   $("#timezone").change(function() {
-    time_slider_init_or_reload();
+    var timeRange = $('#slider-range').slider("values");
+    time_slider_init_or_reload(timeRange);
   });
 
   $('.datetimepicker-no-time').on('changeDate', function(e) {
-    time_slider_init_or_reload();
+    var timeRange = $('#slider-range').slider("values");
+    time_slider_init_or_reload(timeRange);
   });
 }
 
 timezone_init()
-time_slider_init_or_reload()
+time_slider_init_or_reload([480, 600])
