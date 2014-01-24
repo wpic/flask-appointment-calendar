@@ -66,8 +66,8 @@ function createTime(event, ui) {
 }
 
 function renderAvailableBar(apt_time, bar_length) {
+  $('.time-picker div[class^="bar"]').remove()
   if (apt_time.length == 0) {
-	$("<div class=\"bar bar"+i+"\"></div>").appendTo("#time-slider");
     return;
   }
 
@@ -115,7 +115,7 @@ function timezone_init() {
     time_slider_init_or_reload();
   });
 
-  $("#date").change(function() {
+  $('.datetimepicker-no-time').on('changeDate', function(e) {
     time_slider_init_or_reload();
   });
 }
