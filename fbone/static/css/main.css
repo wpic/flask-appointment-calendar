@@ -127,6 +127,7 @@ table .headerSortUp:after {
     border: 0 !important
 }
 
-fieldset[required="true"] label {
-    color: red;
+fieldset[required="true"] label:after {
+    content: "*";
+    color: #DD514C;
 }
