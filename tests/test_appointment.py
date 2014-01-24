@@ -63,5 +63,5 @@ class TestAppointment(TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.json['timezone'], self.timezone)
         self.assertEqual(resp.json['date'], str(self.today))
-        self.assertEqual(len(resp.json['appointment_time']),
+        self.assertEqual(len(resp.json['apt_time_seconds']),
                          len(self.appointment_times))
