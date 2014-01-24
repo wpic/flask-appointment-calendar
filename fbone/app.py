@@ -194,8 +194,8 @@ def configure_admin(app):
 
     class AppointmentView(ModelView):
         column_formatters = {
-            "start_time": lambda v, c, m, p: datetime.fromtimestamp(m.start_time),  # NOQA
-            "end_time": lambda v, c, m, p: datetime.fromtimestamp(m.end_time)
+            "start_time": lambda v, c, m, p: datetime.utcfromtimestamp(m.start_time),  # NOQA
+            "end_time": lambda v, c, m, p: datetime.utcfromtimestamp(m.end_time)  # NOQA
         }
 
         def is_accessible(self):
