@@ -32,11 +32,15 @@ def get_utc_seconds(date_obj, minutes, timezone):
     return int(seconds)
 
 
-def get_local_minutes(minutes, timezone):
-    date_obj = datetime.utcfromtimestamp(minutes).time()
-    minutes = date_obj.hour * 60 + date_obj.minute
-    minutes += 60 * timezone
-    return minutes
+def get_local_minutes(seconds, date_obj, timezone):
+    init_seconds = get_utc_seconds(date_obj, 0, timezone)
+    delta_seconds = seconds - init_seconds
+    if delta_seconds < 0:
+        delta_seconds = 0
+    elif delta_seconds > 86400:
+        delta_seconds = 86400
+
+    return delta_seconds / 60
 
 
 def appointment_ok(appointment):
@@ -75,8 +79,8 @@ def all_appointments():
         order_by(Appointment.start_time)
 
     apt_time_utc_seconds = [[a.start_time, a.end_time] for a in result]
-    apt_time_slider_minutes = [[get_local_minutes(a[0], timezone),
-                                get_local_minutes(a[1], timezone)]
+    apt_time_slider_minutes = [[get_local_minutes(a[0], date_obj, timezone),
+                                get_local_minutes(a[1], date_obj, timezone)]
                                for a in apt_time_utc_seconds]
 
     return jsonify(apt_time_utc_seconds=apt_time_utc_seconds,

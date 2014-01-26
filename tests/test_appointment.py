@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
-import datetime
+from datetime import datetime, date
 import time
 
 from fbone.extensions import db
 from fbone.appointment.models import Appointment
 
-from fbone.appointment.views import get_utc_seconds
+from fbone.appointment.views import get_utc_seconds, get_local_minutes
 
 from tests import TestCase
 
@@ -17,8 +17,8 @@ class TestAppointment(TestCase):
     email = "testemail@sample.com"
     timezone = float(-time.timezone/3600)
     message = "Some kind of test message for calendar."
-    today = datetime.date.today()
-    epoch_date = datetime.date(1970, 1, 1)
+    today = date.today()
+    epoch_date = date(1970, 1, 1)
     appointment_times = ((60, 120), (180, 300), (360, 600), (1200, 1440))
 
     def setUp(self):
@@ -88,3 +88,25 @@ class TestAppointment(TestCase):
         resp = self.client.post('/appointment/create', data=data,
                                 follow_redirects=True)
         self.assertEqual(resp.status_code, 422)
+
+    def test_get_local_minutes(self):
+        seconds1 = 1390665600   # 1/26/2014 12:00:00 AM GMT+8
+        seconds2 = 1390752000   # 1/27/2014 12:00:00 AM GMT+8
+        date_obj = date(2014, 1, 26)
+        timezone = 8            # GMT+8
+        m1 = get_local_minutes(seconds1, date_obj, timezone)
+        m2 = get_local_minutes(seconds2, date_obj, timezone)
+        self.assertEqual(m1, 0)
+        self.assertEqual(m2, 1440)
+
+        timezone = 7            # GMT+7
+        m1 = get_local_minutes(seconds1, date_obj, timezone)
+        m2 = get_local_minutes(seconds2, date_obj, timezone)
+        self.assertEqual(m1, 0)
+        self.assertEqual(m2, 1380)
+
+        timezone = 9            # GMT+9
+        m1 = get_local_minutes(seconds1, date_obj, timezone)
+        m2 = get_local_minutes(seconds2, date_obj, timezone)
+        self.assertEqual(m1, 60)
+        self.assertEqual(m2, 1440)
