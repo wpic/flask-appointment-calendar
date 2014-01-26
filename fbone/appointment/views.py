@@ -2,7 +2,6 @@
 
 from datetime import datetime, date
 import smtplib
-import time
 
 from flask import (Blueprint, render_template, request, abort, flash, url_for,
                    redirect, session, current_app, jsonify)
@@ -16,7 +15,7 @@ from .models import Appointment
 appointment = Blueprint('appointment', __name__, url_prefix='/appointment')
 
 
-def get_epoch_time(date_obj, minutes, timezone):
+def get_utc_seconds(date_obj, minutes, timezone):
     """Get seconds from epoch
 
     date_obj: a datetime.date object
@@ -33,11 +32,10 @@ def get_epoch_time(date_obj, minutes, timezone):
     return int(seconds)
 
 
-def get_local_time_minutes(minutes, timezone):
-    date_obj = datetime.fromtimestamp(minutes).time()
+def get_local_minutes(minutes, timezone):
+    date_obj = datetime.utcfromtimestamp(minutes).time()
     minutes = date_obj.hour * 60 + date_obj.minute
-    timezone_delta = -time.timezone/3600 - timezone
-    minutes -= 60 * timezone_delta
+    minutes += 60 * timezone
     return minutes
 
 
@@ -69,20 +67,20 @@ def all_appointments():
         date_obj = datetime.strptime(request.args.get('date'),
                                      "%Y-%m-%d").date()
     timezone = float(str(request.args.get('timezone', 0.00)))
-    start_time = get_epoch_time(date_obj, 0, timezone)
-    end_time = get_epoch_time(date_obj, 1440, timezone)
+    start_time = get_utc_seconds(date_obj, 0, timezone)
+    end_time = get_utc_seconds(date_obj, 1440, timezone)
 
     result = Appointment.query.filter(Appointment.start_time >= start_time,
                                       Appointment.end_time <= end_time).\
         order_by(Appointment.start_time)
 
-    apt_time_seconds = [[a.start_time, a.end_time] for a in result]
-    apt_time_slider = [[get_local_time_minutes(a[0], timezone),
-                        get_local_time_minutes(a[1], timezone)]
-                       for a in apt_time_seconds]
+    apt_time_utc_seconds = [[a.start_time, a.end_time] for a in result]
+    apt_time_slider_minutes = [[get_local_minutes(a[0], timezone),
+                                get_local_minutes(a[1], timezone)]
+                               for a in apt_time_utc_seconds]
 
-    return jsonify(apt_time_seconds=apt_time_seconds,
-                   apt_time_slider=apt_time_slider,
+    return jsonify(apt_time_utc_seconds=apt_time_utc_seconds,
+                   apt_time_slider_minutes=apt_time_slider_minutes,
                    date=str(date_obj),
                    timezone=timezone)
 
@@ -97,18 +95,17 @@ def create():
             form.email.data = wpic_no_send_email
 
         if not form.validate_on_submit():
-            return render_template('appointment/create.html',
-                                   form=form,
-                                   horizontal=True)
+            message = "Illegal post data."
+            abort(422)
         else:
             appointment = Appointment()
             form.populate_obj(appointment)
-            appointment.start_time = get_epoch_time(form.date.data,
-                                                    int(form.start_time.data),
-                                                    float(form.timezone.data))
-            appointment.end_time = get_epoch_time(form.date.data,
-                                                  int(form.end_time.data),
-                                                  float(form.timezone.data))
+            appointment.start_time = get_utc_seconds(form.date.data,
+                                                     int(form.start_time.data),
+                                                     float(form.timezone.data))
+            appointment.end_time = get_utc_seconds(form.date.data,
+                                                   int(form.end_time.data),
+                                                   float(form.timezone.data))
 
             ok, message = appointment_ok(appointment)
             if ok:

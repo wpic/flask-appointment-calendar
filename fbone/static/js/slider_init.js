@@ -26,9 +26,9 @@ function reloadTimeRangeSlider(timeRange, apt_time, event, ui) {
   var val0 = timeRange[0],
       val1 = timeRange[1],
 	  minutes0 = parseInt(val0 % 60, 10),
-	  hours0 = parseInt(val0 / 60 % 24, 10),
+	  hours0 = parseInt(val0 / 60 % 25, 10), // show 24:00 when val0 == 1440
 	  minutes1 = parseInt(val1 % 60, 10),
-	  hours1 = parseInt(val1 / 60 % 24, 10);
+	  hours1 = parseInt(val1 / 60 % 25, 10); // show 24:00 when val1 == 1440
 
   var startTime = formatTime(hours0, minutes0);
   var endTime = formatTime(hours1, minutes1);
@@ -88,7 +88,7 @@ function time_slider_init_or_reload (timeRange) {
              'date': $("#date").val()},
             function(data) {
     var minutes_a_day = 1440;
-    var apt_time = data.apt_time_slider;
+    var apt_time = data.apt_time_slider_minutes;
     $("#slider-range").slider({
       range: true,
       min: 0,
