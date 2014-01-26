@@ -11,14 +11,14 @@ from flask.ext.babel import Babel
 from flask.ext.debugtoolbar import DebugToolbarExtension
 
 from .config import DefaultConfig
-# from .production_config import ProductionConfig
+from .production_config import ProductionConfig
 from .user import User, user
 from .appointment import Appointment, appointment
 from .settings import settings
 from .frontend import frontend
 from .api import api
 from .extensions import db, mail, cache, login_manager, oid
-from .utils import INSTANCE_FOLDER_PATH
+# from .utils import INSTANCE_FOLDER_PATH
 
 
 # For import *
@@ -41,8 +41,7 @@ def create_app(config=None, app_name=None, blueprints=None):
     if blueprints is None:
         blueprints = DEFAULT_BLUEPRINTS
 
-    app = Flask(app_name, instance_path=INSTANCE_FOLDER_PATH,
-                instance_relative_config=True)
+    app = Flask(app_name)
     configure_app(app, config)
     configure_hook(app)
     configure_blueprints(app, blueprints)
@@ -60,7 +59,10 @@ def configure_app(app, config=None):
     """Different ways of configurations."""
 
     # http://flask.pocoo.org/docs/api/#configuration
-    app.config.from_object(DefaultConfig)
+    if 'PRODUCTION' in os.environ:
+        app.config.from_object(ProductionConfig)
+    else:
+        app.config.from_object(DefaultConfig)
 
     # http://flask.pocoo.org/docs/config/#instance-folders
     app.config.from_pyfile('production.cfg', silent=True)

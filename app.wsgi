@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import sys, os, pwd
+import sys
+import os
 
 project = "fbone"
 
@@ -20,4 +21,5 @@ if BASE_DIR not in sys.path:
 
 # give wsgi the "application"
 from fbone import create_app
-application = create_app()
+from fbone.production_config import ProductionConfig
+application = create_app(config=ProductionConfig)
