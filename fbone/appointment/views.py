@@ -7,6 +7,8 @@ from flask import (Blueprint, render_template, request, abort, flash, url_for,
                    redirect, session, current_app, jsonify)
 from flask.ext.mail import Message
 
+from sqlalchemy.sql import select, and_, or_
+
 from ..extensions import db, mail
 from .forms import MakeAppointmentForm
 from .models import Appointment
@@ -44,18 +46,23 @@ def get_local_minutes(seconds, date_obj, timezone):
 
 
 def appointment_ok(appointment):
-    if appointment.start_time == appointment.end_time:
-        return False, "Start time and end time are the same."
-    start = Appointment.query.filter(Appointment.start_time <=
+    if appointment.start_time >= appointment.end_time:
+        return False, "Start time %s and end time %s is illegal." % \
+            (appointment.start_time, appointment.end_time)
+    start = Appointment.query.filter(Appointment.start_time <
                                      appointment.start_time,
-                                     Appointment.end_time >=
+                                     Appointment.end_time >
                                      appointment.start_time).count()
-    end = Appointment.query.filter(Appointment.start_time <=
+    end = Appointment.query.filter(Appointment.start_time <
                                    appointment.end_time,
-                                   Appointment.end_time >=
+                                   Appointment.end_time >
                                    appointment.end_time).count()
+    equal = Appointment.query.filter(Appointment.start_time ==
+                                     appointment.start_time,
+                                     Appointment.end_time ==
+                                     appointment.end_time).count()
 
-    if start == 1 or end == 1:
+    if start == 1 or end == 1 or equal == 1:
         return False, "Your appointment time is occupied."
     return True, "Appointment ok."
 
@@ -74,9 +81,14 @@ def all_appointments():
     start_time = get_utc_seconds(date_obj, 0, timezone)
     end_time = get_utc_seconds(date_obj, 1440, timezone)
 
-    result = Appointment.query.filter(Appointment.start_time >= start_time,
-                                      Appointment.end_time <= end_time).\
+    conn = db.engine.connect()
+    query = select([Appointment],
+                   or_(and_(Appointment.start_time >= start_time,
+                            Appointment.start_time <= end_time),
+                       and_(Appointment.end_time >= start_time,
+                            Appointment.end_time <= end_time))).\
         order_by(Appointment.start_time)
+    result = conn.execute(query).fetchall()
 
     apt_time_utc_seconds = [[a.start_time, a.end_time] for a in result]
     apt_time_slider_minutes = [[get_local_minutes(a[0], date_obj, timezone),
