@@ -47,7 +47,8 @@ class TestAppointment(TestCase):
         for start, end in self.appointment_times:
             start_time = get_utc_seconds(self.today, start, self.timezone)
             end_time = get_utc_seconds(self.today, end, self.timezone)
-            appointment = self.make_an_appointment(start_time, end_time, self.timezone)
+            appointment = self.make_an_appointment(start_time, end_time,
+                                                   self.timezone)
             db.session.add(appointment)
 
         db.session.commit()
@@ -78,7 +79,7 @@ class TestAppointment(TestCase):
 
     def test_appointment_ok(self):
         start_time1 = 948816000  # 1/26/2000 12:00:00 AM GMT+8
-        date = "2000-01-26"
+        # date = "2000-01-26"
         hour = 3600
         timezone = 8.0
         apt1 = self.make_an_appointment(start_time1, start_time1 + 4*hour,
