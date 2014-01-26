@@ -15,8 +15,8 @@
     <link rel="Shortcut Icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/x-icon">
 
     {% block css %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/vendor/normalize.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/vendor/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     {% endblock %}
 
@@ -110,8 +110,8 @@
 
     {% block js_btm %}
     <script src="{{ url_for('static', filename='js/vendor/underscore-min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/vendor/bootstrap.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/vendor/calendar.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/vendor/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/vendor/calendar.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/plugins.js') }}"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     {% endblock %}
