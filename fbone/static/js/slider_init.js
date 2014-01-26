@@ -2,6 +2,9 @@ function isTimeRangeOK(timeRange, apt_time) {
   if (timeRange[0] == timeRange[1])
     return false;
   for (i = 0; i < apt_time.length; i++) {
+    if ((apt_time[i][0] == 0 && apt_time[i][1] == 0) ||
+        (apt_time[i][0] == 1440 && apt_time[i][1] == 1440))
+      continue;
     if ((timeRange[0] > apt_time[i][0] && timeRange[0] < apt_time[i][1]) ||
         (timeRange[1] > apt_time[i][0] && timeRange[1] < apt_time[i][1]) ||
         (timeRange[0] <= apt_time[i][0] && timeRange[1] >= apt_time[i][1]))
@@ -53,7 +56,7 @@ function reloadTimeRangeSlider(timeRange, apt_time, event, ui) {
     if (val0 == val1)
       message = "Start time and end time is the same.";
     else
-      message = "You selection contains occupied time range";
+      message = "Your selection contains occupied time range";
     $("#time-notify").text(message).css({color: '#B94A48'});
     $("input[type=submit]").attr("disabled", "disabled");
     $("#time-notify").show();
