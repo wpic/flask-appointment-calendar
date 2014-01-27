@@ -3,6 +3,8 @@
 from datetime import date
 import time
 
+from flask import session
+
 from fbone.extensions import db
 from fbone.appointment.models import Appointment
 
@@ -226,10 +228,15 @@ class TestAppointment(TestCase):
 
     def test_post_create(self):
         data = self.make_an_appointment_dict("2011-02-03", "60", "120")
-        resp = self.client.post('/appointment/create', data=data,
-                                follow_redirects=True)
-        self.assertEqual(resp.status_code, 200)
-        self.assertTrue("Congratulations" in resp.data)
+        with self.client:
+            resp = self.client.post('/appointment/create', data=data,
+                                    follow_redirects=True)
+            self.assertEqual(resp.status_code, 200)
+            self.assertTrue("Congratulations" in resp.data)
+
+            # Ensure session contains something.
+            self.assertEqual(session['name'], data['name'])
+            self.assertEqual(session['email'], data['email'])
 
     def test_post_illegal_data(self):
         illegal_date = "2011-02-033"

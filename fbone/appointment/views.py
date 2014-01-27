@@ -114,6 +114,10 @@ def create():
             message = "Illegal post data."
             abort(422)
         else:
+            # Keep name and email in session
+            session['name'] = form.name.data
+            session['email'] = form.email.data
+
             appointment = Appointment()
             form.populate_obj(appointment)
             appointment.start_time = get_utc_seconds(form.date.data,
