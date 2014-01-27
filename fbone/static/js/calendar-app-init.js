@@ -40,12 +40,16 @@
 
       // redirect to appointment page when click on a date
       $('.cal-month-box *[data-cal-date]').off('click');
-      $('.cal-month-box *[data-cal-date]').click(function() {
+      $('.cal-month-box *[data-cal-date]').each(function() {
         var today = new Date();
         today.setHours(0, 0, 0, 0);
         var calDate = new Date($(this).data('calDate'))
         if (calDate >= today)
-          window.location.href = "/appointment/create?date=" + $(this).data('calDate');
+          $(this).click(function () {
+            window.location.href = "/appointment/create?date=" + $(this).data('calDate');
+          })
+        else
+          $(this).css({cursor: "default"})
       });
 
       // disable double click events in cal-cell of month view
