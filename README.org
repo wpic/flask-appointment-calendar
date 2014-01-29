@@ -1,3 +1,27 @@
+* Introduction
+
+This project provide a simple but powerful web calendar system for making
+apppointment, anonymously, and exclusively. It is suitable to use as a personal
+schedule, where your customers from all over the world make appointment to you,
+and you can arrange your schedule based on the appointments.
+
+Features:
+1. No need to register and activation your account. Just make an appointment as
+   you need.
+2. It supports HTTP session.
+3. Has a customized, powerful js time range selection widget based on [[http://jqueryui.com/slider/][jquery-ui
+   slider]],
+   - Exclusive appointments
+   - Support timezone
+   - Dynamic updates via Ajax when date or timezone changed.
+
+Techniques:
+1. [[https://github.com/imwilsonxu/fbone][fbone]], the project template
+2. [[https://github.com/Serhioromano/bootstrap-calendar][bootstrap-calendar]], for index page calendar, with some customized event
+   listeners and UI.
+3. [[http://tarruda.github.io/bootstrap-datetimepicker/][bootstrap-datetimepicker]], for verbose datetime picker.
+4. [[http://jqueryui.com/slider/][jquery ui slider]]: A real selling point of this project.
+
 * Setup
 
 This project starts from [[https://github.com/imwilsonxu/fbone][fbone]] for faster prototyping with Python Flask.
@@ -30,6 +54,75 @@ Restart:
 #+BEGIN_SRC sh
 source env/bin/activate
 python manage.py run
+#+END_SRC
+
+* Deployment
+
+Here's a sample deployment steps with Ubuntu/Apache(mod_wsgi).
+
+#+BEGIN_SRC sh
+  sudo apt-get install git apache2 mysql-server libmysqlclient-dev
+#+END_SRC
+
+Install [[https://code.google.com/p/modwsgi/][mod_wsgi]] for python flask web framework:
+#+BEGIN_SRC sh
+  # Install mod-wsgi
+  sudo apt-get install libapache2-mod-wsgi
+#+END_SRC
+
+Install pip and [[http://docs.fabfile.org/en/1.8/][fabric]], install necessary requirement packages to virtualenv:
+
+#+BEGIN_SRC sh
+fab setup
+#+END_SRC
+
+Add a sample conf file for Apache virtual host:
+#+BEGIN_EXAMPLE
+<VirtualHost *:80>
+        ServerAdmin webmaster@localhost
+
+        ServerName webmeet.com
+        ServerAlias web-calendar.web-demo.com
+
+        WSGIDaemonProcess fbone user=www-data group=www-data threads=2
+        WSGIScriptAlias / /var/www/web-calendar/public_html/app.wsgi
+
+        DocumentRoot /var/www/web-calendar/public_html/
+        <Directory /var/www/web-calendar/public_html/>
+                Options Indexes FollowSymLinks MultiViews
+                AllowOverride All
+                Order allow,deny
+                allow from all
+        </Directory>
+
+        Alias /robots.txt /var/www/shared/robots.txt
+
+        <Location /server-status>
+                SetHandler server-status
+        </Location>
+
+        ErrorLog /var/www/web-calendar/logs/error.log
+
+        # Possible values include: debug, info, notice, warn, error, crit,
+        # alert, emerg.
+        LogLevel warn
+
+        CustomLog /var/www/web-calendar/logs/access.log combined
+</VirtualHost>
+#+END_EXAMPLE
+
+Modify [[https://github.com/wpic/flask-appointment-calendar/blob/master/fbone/production_config.py][production_config.py]] file:
+- =DEBUG=
+- =SECRET_KEY=
+- =SQLALCHEMY_DATABASE_URI=
+- =MAIL_USERNAME=
+- =MAIL_PASSWORD=
+
+Then install this project to virtual env:
+
+#+BEGIN_SRC sh
+source env/bin/activate
+python setup.py install
 #+END_SRC
 
 * Admin
