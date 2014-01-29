@@ -136,8 +136,7 @@
 <div class="control-group{% if field.errors %} error{% endif %}">
     {{ field.label(class_="control-label") }}
     <div class="controls">
-        {{ field(class="span6", rows="5") }}
-        <span class="help-inline">{{ field.description }}</span>
+        {{ field(class="span6", rows="7", placeholder=field.description['placeholder']) }}
         {% if field.errors -%}
             {% for error in field.errors -%}
             <span class="help-block error">{{ error }}</span>

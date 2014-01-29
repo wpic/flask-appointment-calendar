@@ -56,6 +56,11 @@ TIMEZONES = {
             ("12.00", "(GMT +12:00) Auckland, Wellington, Fiji, Kamchatka")]
 }
 
+MESSAGE_PLACEHOLDER = """Please indicate how you would like us to contact you
+ for the conversation to launch your complimentary service package: we offer
+ conference calling via Webex and Go To Meeting, and telephony as well. Should
+ you choose to leave your email, we will use it only for contact in this
+ case."""
 
 class SelectOptgroupField(SelectField):
     """
@@ -91,5 +96,6 @@ class MakeAppointmentForm(Form):
                                    choices=TIMEZONES)
     message = TextAreaField(u'Message',
                             [Required(),
-                             Length(MESSAGE_LEN_MIN, MESSAGE_LEN_MAX)])
+                             Length(MESSAGE_LEN_MIN, MESSAGE_LEN_MAX)],
+                            description={'placeholder': MESSAGE_PLACEHOLDER})
     submit = SubmitField('OK')
