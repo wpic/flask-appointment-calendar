@@ -125,6 +125,15 @@ source env/bin/activate
 python setup.py install
 #+END_SRC
 
+* Upgrade
+
+#+BEGIN_SRC sh
+git pull origin master
+source env/bin/activate
+python setup.py install
+sudo /etc/init.d/apache2 restart
+#+END_SRC
+
 * Admin
 The hidden entrance:
 - Login: http://localhost:5000/login (username: admin, password: 123456)
