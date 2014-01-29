@@ -84,14 +84,17 @@ class MakeAppointmentForm(Form):
                      [Required(),
                       Length(USERNAME_LEN_MIN, USERNAME_LEN_MAX)])
     time_range = TimeRangeSliderField(u'Time Range')
-    start_time = HiddenField(u'start_time', [Required()])
-    end_time = HiddenField(u'end_time', [Required()])
+    start_time = HiddenField(u'start_time')
+    end_time = HiddenField(u'end_time')
     email = EmailField(u'Email',
                        [Email(),
                         Length(EMAIL_LEN_MIN, EMAIL_LEN_MAX)])
-    date = DateField(u'Date', default=datetime.date.today())
+    date = DateField(u'Date',
+                     [Required()],
+                     default=datetime.date.today())
     timezone = SelectOptgroupField(u'Timezone',
-                                   [Length(TIMEZONE_LEN_MIN,
+                                   [Required(),
+                                    Length(TIMEZONE_LEN_MIN,
                                            TIMEZONE_LEN_MAX)],
                                    choices=TIMEZONES)
     message = TextAreaField(u'Message',
