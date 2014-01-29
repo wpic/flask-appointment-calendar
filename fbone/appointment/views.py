@@ -104,7 +104,7 @@ def all_appointments():
 @appointment.route('/create', methods=['GET', 'POST'])
 def create():
     if request.method == 'POST':
-        wpic_no_send_email = u"no-send@wpic.com"
+        wpic_no_send_email = u"wpic-no-send-anonymous@wpic.com"
         form = MakeAppointmentForm(next=request.args.get('next'))
 
         if form.email.data is u"" or form.email.data is "":
@@ -143,22 +143,23 @@ def create():
             """
             flash(flash_message)
 
-            mail_message = Message("WPIC Web Calendar Appointment@%s" %
-                                   form.date.data,
-                                   recipients=[form.email.data])
-            mail_message.body = """Dear %s:
-
-Congratulations! You've just made an appointment on WPIC Web
-Calendar system. Here's the appointment details:
+            mail_message = Message("New Appointment from wpicmeet.com",
+                                   recipients=["ernie.diaz@web-presence-in-china.com"])
+            mail_message.body = """New appointment here:
 
 ----
+Name: %s
+Message: %s
 Date: %s
+Email: %s
+Time: %s - %s
 Timezone: %s
-Your message:
-%s
 ----
-            """ % (form.name.data, form.date.data,
-                   form.timezone.data, form.message.data)
+            """ % (form.name.data, form.message.data,
+                   form.date.data,
+                   form.email.data,
+                   form.start_time.data, form.end_time.data,
+                   form.timezone.data)
 
             if form.email.data is not wpic_no_send_email:
                 try:
