@@ -232,7 +232,7 @@ class TestAppointment(TestCase):
             resp = self.client.post('/appointment/create', data=data,
                                     follow_redirects=True)
             self.assertEqual(resp.status_code, 200)
-            self.assertTrue("Congratulations" in resp.data)
+            self.assertTrue("Thank" in resp.data)
 
             # Ensure session contains something.
             self.assertEqual(session['name'], data['name'])
@@ -243,7 +243,7 @@ class TestAppointment(TestCase):
         data = self.make_an_appointment_dict(illegal_date, "60", "120")
         resp = self.client.post('/appointment/create', data=data,
                                 follow_redirects=True)
-        self.assertEqual(resp.status_code, 422)
+        self.assertEqual(resp.status_code, 200)
 
     def test_get_local_minutes(self):
         seconds1 = 1390665600   # 1/26/2014 12:00:00 AM GMT+8

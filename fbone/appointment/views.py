@@ -112,7 +112,9 @@ def create():
 
         if not form.validate_on_submit():
             message = "Illegal post data."
-            abort(422)
+            return render_template('appointment/create.html',
+                                   form=form,
+                                   horizontal=True)
         else:
             # Keep name and email in session
             session['name'] = form.name.data
@@ -136,8 +138,8 @@ def create():
                 return redirect(url_for('appointment.create'))
 
             flash_message = """
-            Congratulations! You've just made an appointment
-            on WPIC Web Calendar system, please check your email for details.
+            Thank you for contacting us. If you have any questions, please email
+            ernie.diaz@web-presence-in-china.com.
             """
             flash(flash_message)
 
